@@ -1,6 +1,7 @@
 package jonnymatts.facerecognition;
 
 import org.opencv.core.*;
+import org.opencv.highgui.Highgui;
 import org.opencv.objdetect.*;
 
 import static jonnymatts.facerecognition.ImageHelper.*;
@@ -20,6 +21,16 @@ public class Application
         // Detect faces in image using Viola-Jones
         Mat faceDetectedImg = useFeatureDetector(img, cas);
         
-        displayImage(Mat2BufferedImage(faceDetectedImg));
+        LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler(img);
+        
+        // Calculate the LBP of the image
+        lbph.calculateLBP(3);
+        
+        Mat lbpImg = lbph.getImage();
+        
+        // Convert the image to byte array for display
+        lbpImg.convertTo(lbpImg, CvType.CV_8U);
+        
+        displayImage(Mat2BufferedImage(lbpImg));
     }
 }

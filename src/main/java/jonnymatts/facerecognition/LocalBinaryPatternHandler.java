@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.*;
 
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 public class LocalBinaryPatternHandler {
@@ -32,10 +33,24 @@ public class LocalBinaryPatternHandler {
 		return new ArrayList< List<Double>>();
 	}
 	
-	Double calculateLBPForPixel(int x, int y, int size) {
+	// Calculate the LBP for each pixel within the image
+	void calculateLBP(int windowSize) {
+		Mat lbpImg = new Mat(img.rows(), img.cols(), CvType.CV_64F);;
+		int windowBoundary = ((windowSize + 1) / 2) - 1;
+		
+		for(int i = windowBoundary; i < (img.rows() - windowBoundary); i++) {
+			for(int j = windowBoundary; j < (img.cols() - windowBoundary); j++) {
+				lbpImg.put(i, j, calculateLBPForPixel(i, j, windowSize));
+			}
+		}
+		
+		img = lbpImg;
+	}
+	
+	Double calculateLBPForPixel(int x, int y, int windowSize) {
 		
 		// Find radius of neighbourhood
-		int nbhRadius = ((size + 1) / 2) - 1;
+		int nbhRadius = ((windowSize + 1) / 2) - 1;
 		
 		// Find neighbourhood for central pixel
 		Mat nbh = img.submat(x-nbhRadius, x+nbhRadius+1, y-nbhRadius, y+nbhRadius+1);
@@ -44,7 +59,7 @@ public class LocalBinaryPatternHandler {
 		List<Double> nbhList = convertMatToList(nbh);
 		
 		// Remove and preserve central pixel value from list
-		int centrePixelIndex = (size * size) / 2;
+		int centrePixelIndex = (windowSize * windowSize) / 2;
 		Double centrePixelValue = nbhList.get(centrePixelIndex);
 		nbhList.remove(centrePixelIndex);
 		

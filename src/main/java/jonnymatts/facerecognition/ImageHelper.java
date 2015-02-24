@@ -9,9 +9,43 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 public class ImageHelper {
+	
+	public static Mat readImageFromFile(String filename) {
+		String dir = System.getProperty("user.dir");
+        Mat img = Highgui.imread(dir + filename);
+		return img;
+	}
+	
+	// Applies the supplied feature detector to the suppplied image
+	public static Mat useFeatureDetector(Mat img, CascadeClassifier cas) {
+		Mat grey = new Mat();
+        MatOfRect rectMat = new MatOfRect();
+        
+        // Convert colour image to greyscale 
+        Imgproc.cvtColor(img, grey, Imgproc.COLOR_BGR2GRAY);
+        
+        // Use detector on greyscale image
+        cas.detectMultiScale(grey, rectMat);
+        
+        // For each face detected, draw rectangle onto original image
+        for(Rect rect : rectMat.toList()) {
+        	Core.rectangle(img, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),
+                    new Scalar(0, 255, 0));
+        }
+        
+		return img;
+	}
 	
 	public static void displayImage(Image img2) {
     	ImageIcon icon=new ImageIcon(img2);

@@ -4,6 +4,8 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -20,6 +22,18 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 public class ImageHelper {
+	
+	// Converts 2D matrix to 1D list
+	public static List<Double> convertMatToList(Mat input) {
+		List<Double> returnList = new ArrayList<Double>();
+		
+		for(int i = 0; i < input.rows(); i++) {
+			for(int j = 0; j < input.cols(); j++) {
+				returnList.add((Double)input.get(i,j)[0]);
+			}
+		}
+		return returnList;
+	}
 	
 	public static Mat readImageFromFile(String filename) {
 		String dir = System.getProperty("user.dir");

@@ -1,4 +1,4 @@
-package jonnymatts.facerecognition.test;
+package jonnymatts.facerecognition;
 
 import static org.junit.Assert.*;
 import static jonnymatts.facerecognition.ImageHelper.*;

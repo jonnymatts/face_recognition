@@ -28,45 +28,28 @@ public class LocalBinaryPatternHandlerTest {
 		testMat.put(2, 1, 7);
 		testMat.put(2, 2, 1);
 		
-		lbph = new LocalBinaryPatternHandler(testMat);
-	}
-	
-	@Test
-	public void testLBPHandlerEmptyConstructor() {
-		LocalBinaryPatternHandler emptyLbph = new LocalBinaryPatternHandler();
-		Mat img = emptyLbph.getImage(); 		
-		assertTrue(img.empty());
-	}
-	
-	@Test
-	public void testLBPHandlerConstructorWithParam() {
-		Mat img = lbph.getImage();
-		assertEquals(img, testMat);
+		lbph = new LocalBinaryPatternHandler();
 	}
 
 	@Test
 	public void test3x3LBPCalculation() {
-		Double lbp = lbph.calculateLBPForPixel(1, 1, 3);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 3);
 		assertEquals(lbp, 117, 0.001);
 	}
 	
 	@Test
 	public void test3x3LBPCalculationMin() {
 		testMat.put(1, 1, 8);
-		lbph.setImage(testMat);
 		
-		Double lbp = lbph.calculateLBPForPixel(1, 1, 3);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 3);
 		assertEquals(lbp, 0, 0.001);
 	}
 	
 	@Test
 	public void test3x3LBPCalculationMax() {
 		testMat.put(1, 1, 0);
-		lbph.setImage(testMat);
 		
-		Double lbp = lbph.calculateLBPForPixel(1, 1, 3);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 3);
 		assertEquals(lbp, 255, 0.001);
 	}
-
-
 }

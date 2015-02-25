@@ -21,16 +21,10 @@ public class Application
         // Detect faces in image using Viola-Jones
         Mat faceDetectedImg = useFeatureDetector(img, cas);
         
-        LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler(img);
+        LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler();
         
         // Calculate the LBP of the image
-        lbph.calculateLBP(3);
+        System.out.println(lbph.findFeatureVector(img, 3, 8, 1));
         
-        Mat lbpImg = lbph.getImage();
-        
-        // Convert the image to byte array for display
-        lbpImg.convertTo(lbpImg, CvType.CV_8U);
-        
-        displayImage(Mat2BufferedImage(lbpImg));
     }
 }

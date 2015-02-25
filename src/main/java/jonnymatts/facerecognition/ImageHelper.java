@@ -61,11 +61,12 @@ public class ImageHelper {
 		return img;
 	}
 	
-	public static void displayImage(Image img2) {
-    	ImageIcon icon=new ImageIcon(img2);
+	public static void displayImage(Mat mat) {
+		Image img = Mat2BufferedImage(mat);
+    	ImageIcon icon=new ImageIcon(img);
     	JFrame frame=new JFrame();
     	frame.setLayout(new FlowLayout());        
-    	frame.setSize(img2.getWidth(null)+50, img2.getHeight(null)+50);     
+    	frame.setSize(img.getWidth(null)+50, img.getHeight(null)+50);     
     	JLabel lbl=new JLabel();
     	lbl.setIcon(icon);
     	frame.add(lbl);

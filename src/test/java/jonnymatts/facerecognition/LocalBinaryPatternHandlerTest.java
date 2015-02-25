@@ -33,15 +33,15 @@ public class LocalBinaryPatternHandlerTest {
 
 	@Test
 	public void test3x3LBPCalculation() {
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 3);
-		assertEquals(lbp, 117, 0.001);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
+		assertEquals(lbp, 13, 0.001);
 	}
 	
 	@Test
 	public void test3x3LBPCalculationMin() {
 		testMat.put(1, 1, 8);
 		
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 3);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
 		assertEquals(lbp, 0, 0.001);
 	}
 	
@@ -49,7 +49,7 @@ public class LocalBinaryPatternHandlerTest {
 	public void test3x3LBPCalculationMax() {
 		testMat.put(1, 1, 0);
 		
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 3);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
 		assertEquals(lbp, 255, 0.001);
 	}
 }

@@ -1,6 +1,7 @@
 package jonnymatts.facerecognition;
 
 import static jonnymatts.facerecognition.ImageHelper.*;
+import static java.lang.Math.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,12 +15,12 @@ import org.opencv.core.Mat;
 public class LocalBinaryPatternHandler {
 	
 	// Find the feature vector for given image, population and radius
-	public List<List<Double>> findFeatureVector(Mat img, int windowSize, int population, int radius) {
+	public List<List<Double>> findFeatureVector(Mat img, int population, int radius) {
 		
 		// Split image into 5x5 grid of sub-images
 		List<Mat> subImgList = new ArrayList<Mat>();
-		int subImgWidth = (int)Math.floor(img.cols()/5);
-		int subImgHeight = (int)Math.floor(img.rows()/5);
+		int subImgWidth = (int)floor(img.cols()/5);
+		int subImgHeight = (int)floor(img.rows()/5);
 		
 		for(int i = 0; i < 5; i++) {
 			for(int j = 0; j < 5; j++) {
@@ -36,7 +37,7 @@ public class LocalBinaryPatternHandler {
 		for(Mat subImg : subImgList) {
 			
 			// Create histogram list for sub-image
-			int histSize = (int)Math.pow(2, (double)population);
+			int histSize = (int)pow(2, (double)population);
 			Double[] histArr = new Double[histSize];
 			
 			// Fill histogram with default values (0)
@@ -45,12 +46,12 @@ public class LocalBinaryPatternHandler {
 			Collections.fill(imgHist, 0d);
 			
 			// Find the LBP value at each pixel
-			Mat lbpImg = calculateLBP(subImg, windowSize, population, radius);
+			Mat lbpImg = calculateLBP(subImg, population, radius);
 			
 			List<Double> lbpValueList = convertMatToList(lbpImg);
 			
 			// Limit values between 0 and maxValue 
-			lbpValueList = lbpValueList.stream().map(v -> Math.max(0, Math.min(histSize-1, v))).collect(Collectors.toList());
+			lbpValueList = lbpValueList.stream().map(v -> max(0, min(histSize-1, v))).collect(Collectors.toList());
 			
 			// Populate histogram with LBP data
 			for(Double val : lbpValueList) {
@@ -66,38 +67,42 @@ public class LocalBinaryPatternHandler {
 	}
 	
 	// Calculate the LBP for each pixel within the image
-	Mat calculateLBP(Mat img, int windowSize, int population, int radius) {
-		Mat lbpImg = new Mat(img.rows(), img.cols(), CvType.CV_64F);;
-		int windowBoundary = ((windowSize + 1) / 2) - 1;
+	Mat calculateLBP(Mat img, int population, int radius) {
+		Mat lbpImg = new Mat(img.rows(), img.cols(), CvType.CV_64F);
 		
-		for(int i = windowBoundary; i < (img.rows() - windowBoundary); i++) {
-			for(int j = windowBoundary; j < (img.cols() - windowBoundary); j++) {
-				if((i < windowBoundary) || (i > img.rows() - windowBoundary) 
-						|| (j < windowBoundary) || (j > img.cols() - windowBoundary)) {
-					lbpImg.put(i, j, 0);
+		for(int i = radius; i < (img.cols() - radius); i++) {
+			for(int j = radius; j < (img.rows() - radius); j++) {
+				if((i < radius) || (i > img.cols() - radius) 
+						|| (j < radius) || (j > img.rows() - radius)) {
+					lbpImg.put(j, i, 0);
 				}
-				lbpImg.put(i, j, calculateLBPForPixel(img, i, j, windowSize));
+				lbpImg.put(j, i, calculateLBPForPixel(img, i, j, population, radius));
 			}
 		}
 		
 		return lbpImg;
 	}
 	
-	Double calculateLBPForPixel(Mat img, int x, int y, int windowSize) {
-		
-		// Find radius of neighbourhood
-		int nbhRadius = ((windowSize + 1) / 2) - 1;
+	// Calculate the LBP for each pixel within the image
+	Double calculateLBPForPixel(Mat img, int x, int y, int population, int radius) {
 		
 		// Find neighbourhood for central pixel
-		Mat nbh = img.submat(x-nbhRadius, x+nbhRadius+1, y-nbhRadius, y+nbhRadius+1);
+		Mat nbh = img.submat(y-radius, min((y+radius+1), img.cols()), x-radius, min((x+radius+1), img.cols()));
 		
-		// Convert nbh to 1D list
-		List<Double> nbhList = convertMatToList(nbh);
+		List<Double> nbhList = new ArrayList<Double>();
+		
+		// Use linear interpolation to find circular LBP values
+		double anglePortion = (2 * PI) / population;
+		for(int i = 0; i < population; i++) {
+			double angle = i*anglePortion;
+			double px = x + (radius * cos(angle));
+			double py = y + (radius * sin(angle));
+			double value = ((px == 0) || (py == 0) || ((px % 1 == 0) && (py % 1 ==0))) ? img.get((int)round(py), (int)round(px))[0] : bilinearInterpolation(img, px, py);
+			nbhList.add(value);
+		}
 		
 		// Remove and preserve central pixel value from list
-		int centrePixelIndex = (windowSize * windowSize) / 2;
-		Double centrePixelValue = nbhList.get(centrePixelIndex);
-		nbhList.remove(centrePixelIndex);
+		Double centrePixelValue = img.get(y, x)[0];
 		
 		// Convert list value to either 1 or 0
 		// if(value < centrePixelValue) 0 else 1
@@ -106,7 +111,7 @@ public class LocalBinaryPatternHandler {
 		// Find the sum of values multiplied by the corresponding power of 2
 		Double sum = 0d;
 		for(int i = 0; i < nbhList.size(); i++){
-			sum = sum + nbhBinList.get(i) * (Math.pow(2, i));
+			sum = sum + nbhBinList.get(i) * (pow(2, i));
 		}
 		
 		return sum;

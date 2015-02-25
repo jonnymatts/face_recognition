@@ -5,6 +5,7 @@ import static jonnymatts.facerecognition.ImageHelper.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.objdetect.CascadeClassifier;
 
@@ -44,6 +45,24 @@ public class ImageHelperTest {
         
         assertTrue(img.empty());
         assertEquals(img.height(), 0);
+	}
+	
+	@Test
+	public void testBilinearInterpolation() {
+		Mat testMat = new Mat(3, 3, CvType.CV_64F);
+		testMat.put(0, 0, 1);
+		testMat.put(0, 1, 2);
+		testMat.put(0, 2, 3);
+		testMat.put(1, 0, 4);
+		testMat.put(1, 1, 5);
+		testMat.put(1, 2, 6);
+		testMat.put(2, 0, 7);
+		testMat.put(2, 1, 8);
+		testMat.put(2, 2, 9);
+		
+		double intVal = bilinearInterpolation(testMat, 1.3, 0.5);
+		
+		assertEquals(intVal, 3.8, 0.001);
 	}
 
 }

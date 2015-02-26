@@ -4,10 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.opencv.core.CvType.*;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 

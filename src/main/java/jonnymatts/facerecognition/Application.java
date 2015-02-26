@@ -1,8 +1,6 @@
 package jonnymatts.facerecognition;
 
 import org.opencv.core.*;
-import org.opencv.highgui.Highgui;
-import org.opencv.objdetect.*;
 
 import static jonnymatts.facerecognition.ImageHelper.*;
 
@@ -17,7 +15,7 @@ public class Application
         
         LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler();
         
-        Mat newImg = lbph.calculateLBP(img, 8, 5);       
+        Mat newImg = lbph.calculateLBP(img, 8, 1);
         
         displayImage(newImg);
     }

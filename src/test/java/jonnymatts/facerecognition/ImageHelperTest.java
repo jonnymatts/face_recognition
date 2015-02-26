@@ -17,7 +17,6 @@ public class ImageHelperTest {
 	@Before
 	public void setUp() throws Exception {
 		System.load( "/usr/local/Cellar/opencv/2.4.10.1/share/OpenCV/java/libopencv_java2410.dylib" );
-    	CascadeClassifier cas = new CascadeClassifier("/Users/jonnymatts/dev/opencv-2.4.10/data/haarcascades/haarcascade_frontalface_default.xml");
     	dir = System.getProperty("user.dir");
 	}
 

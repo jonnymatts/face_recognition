@@ -2,6 +2,8 @@ package jonnymatts.facerecognition;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,13 +34,13 @@ public class LocalBinaryPatternHandlerTest {
 	}
 
 	@Test
-	public void test3x3LBPCalculation() {
+	public void testLBPCalculation() {
 		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
 		assertEquals(lbp, 13, 0.001);
 	}
 	
 	@Test
-	public void test3x3LBPCalculationMin() {
+	public void testLBPCalculationMin() {
 		testMat.put(1, 1, 8);
 		
 		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
@@ -46,10 +48,17 @@ public class LocalBinaryPatternHandlerTest {
 	}
 	
 	@Test
-	public void test3x3LBPCalculationMax() {
+	public void testLBPCalculationMax() {
 		testMat.put(1, 1, 0);
 		
 		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
 		assertEquals(lbp, 255, 0.001);
+	}
+	
+	@Test
+	public void testLBPFeatureExtraction() {
+		List<List<Double>> lbp = lbph.findFeatureVector(testMat, 8, 1, 1);
+		assertEquals(lbp.get(0).get(0), 8, 0.001);
+		assertEquals(lbp.get(0).get(1), 0, 0.001);
 	}
 }

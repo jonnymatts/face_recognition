@@ -15,15 +15,15 @@ import org.opencv.core.Mat;
 public class LocalBinaryPatternHandler {
 	
 	// Find the feature vector for given image, population and radius
-	public List<List<Double>> findFeatureVector(Mat img, int population, int radius) {
+	public List<List<Double>> findFeatureVector(Mat img, int population, int radius, int noOfSubImgs) {
 		
-		// Split image into 5x5 grid of sub-images
+		// Split image into grid of sub-images
 		List<Mat> subImgList = new ArrayList<Mat>();
-		int subImgWidth = (int)floor(img.cols()/5);
-		int subImgHeight = (int)floor(img.rows()/5);
+		int subImgWidth = (int)floor(img.cols()/noOfSubImgs);
+		int subImgHeight = (int)floor(img.rows()/noOfSubImgs);
 		
-		for(int i = 0; i < 5; i++) {
-			for(int j = 0; j < 5; j++) {
+		for(int i = 0; i < noOfSubImgs; i++) {
+			for(int j = 0; j < noOfSubImgs; j++) {
 				int iIndex = i * subImgWidth;
 				int jIndex = j * subImgHeight;
 				subImgList.add(img.submat(iIndex, iIndex+subImgWidth, jIndex, jIndex+subImgHeight));
@@ -32,8 +32,6 @@ public class LocalBinaryPatternHandler {
 		
 		// Find histogram for each sub-image
 		List<List<Double>> histList = new ArrayList<List<Double>>();
-		int a = 0;
-		int i = 0;
 		for(Mat subImg : subImgList) {
 			
 			// Create histogram list for sub-image
@@ -60,7 +58,6 @@ public class LocalBinaryPatternHandler {
 			}
 			
 			histList.add(imgHist);
-			i++;
 		}
 		
 		return histList;
@@ -85,10 +82,6 @@ public class LocalBinaryPatternHandler {
 	
 	// Calculate the LBP for each pixel within the image
 	Double calculateLBPForPixel(Mat img, int x, int y, int population, int radius) {
-		
-		// Find neighbourhood for central pixel
-		Mat nbh = img.submat(y-radius, min((y+radius+1), img.cols()), x-radius, min((x+radius+1), img.cols()));
-		
 		List<Double> nbhList = new ArrayList<Double>();
 		
 		// Use linear interpolation to find circular LBP values

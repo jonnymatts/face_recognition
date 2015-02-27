@@ -13,39 +13,39 @@ public class ImageHelperTest {
 
 	String dir;
 	CascadeClassifier cas;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		System.load( "/usr/local/Cellar/opencv/2.4.10.1/share/OpenCV/java/libopencv_java2410.dylib" );
-    	dir = System.getProperty("user.dir");
+		System.load("/usr/local/Cellar/opencv/2.4.10.1/share/OpenCV/java/libopencv_java2410.dylib");
+		dir = System.getProperty("user.dir");
 	}
 
 	@Test
 	public void testImageReadCorrectInputJpg() {
 		Mat img = readImageFromFile("/resources/villa.jpg");
-        
-        assertFalse(img.empty());
-        assertEquals(img.height(), 764);
-        assertEquals(img.channels(), 3);
+
+		assertFalse(img.empty());
+		assertEquals(img.height(), 764);
+		assertEquals(img.channels(), 3);
 	}
-	
+
 	@Test
 	public void testImageReadCorrectInputBmp() {
 		Mat img = readImageFromFile("/resources/lena.bmp");
-        
-        assertFalse(img.empty());
-        assertEquals(img.height(), 512);
-        assertEquals(img.channels(), 3);
+
+		assertFalse(img.empty());
+		assertEquals(img.height(), 512);
+		assertEquals(img.channels(), 3);
 	}
-	
+
 	@Test
 	public void testImageReadError() {
 		Mat img = readImageFromFile("/resources/non-existent.jpg");
-        
-        assertTrue(img.empty());
-        assertEquals(img.height(), 0);
+
+		assertTrue(img.empty());
+		assertEquals(img.height(), 0);
 	}
-	
+
 	@Test
 	public void testBilinearInterpolation() {
 		Mat testMat = new Mat(3, 3, CvType.CV_64F);
@@ -58,9 +58,9 @@ public class ImageHelperTest {
 		testMat.put(2, 0, 7);
 		testMat.put(2, 1, 8);
 		testMat.put(2, 2, 9);
-		
+
 		double intVal = bilinearInterpolation(testMat, 1.3, 0.5);
-		
+
 		assertEquals(intVal, 3.8, 0.001);
 	}
 

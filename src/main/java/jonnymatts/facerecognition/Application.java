@@ -13,9 +13,9 @@ public class Application
         
         Mat img = readImageFromFile("/resources/lena.bmp");
         
-        LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler();
+        LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler(8, 1, true);
         
-        Mat newImg = lbph.calculateLBP(img, 8, 1);
+        Mat newImg = lbph.calculateLBP(img);
         
         displayImage(newImg);
     }

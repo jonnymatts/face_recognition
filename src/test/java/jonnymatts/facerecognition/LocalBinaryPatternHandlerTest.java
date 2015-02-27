@@ -2,6 +2,7 @@ package jonnymatts.facerecognition;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -28,12 +29,12 @@ public class LocalBinaryPatternHandlerTest {
 		testMat.put(2, 1, 7);
 		testMat.put(2, 2, 1);
 		
-		lbph = new LocalBinaryPatternHandler();
+		lbph = new LocalBinaryPatternHandler(8, 1, false);
 	}
 
 	@Test
 	public void testLBPCalculation() {
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1);
 		assertEquals(lbp, 13, 0.001);
 	}
 	
@@ -41,7 +42,7 @@ public class LocalBinaryPatternHandlerTest {
 	public void testLBPCalculationMin() {
 		testMat.put(1, 1, 8);
 		
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1);
 		assertEquals(lbp, 0, 0.001);
 	}
 	
@@ -49,14 +50,22 @@ public class LocalBinaryPatternHandlerTest {
 	public void testLBPCalculationMax() {
 		testMat.put(1, 1, 0);
 		
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, 8, 1);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1);
 		assertEquals(lbp, 255, 0.001);
 	}
 	
 	@Test
 	public void testLBPFeatureExtraction() {
-		List<List<Double>> lbp = lbph.findFeatureVector(testMat, 8, 1, 1);
+		List<List<Double>> lbp = lbph.findFeatureVector(testMat, 1);
 		assertEquals(lbp.get(0).get(0), 8, 0.001);
 		assertEquals(lbp.get(0).get(1), 0, 0.001);
+	}
+	
+	@Test
+	public void testIsUniformPattern() {
+		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 256);
+		
+		lbph.setUseUniformPatterns(true);
+		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 59);
 	}
 }

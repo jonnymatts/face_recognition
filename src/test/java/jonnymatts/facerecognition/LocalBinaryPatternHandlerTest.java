@@ -2,7 +2,7 @@ package jonnymatts.facerecognition;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -29,13 +29,13 @@ public class LocalBinaryPatternHandlerTest {
 		testMat.put(2, 1, 7);
 		testMat.put(2, 2, 1);
 
-		lbph = new LocalBinaryPatternHandler(8, 1, false);
+		lbph = new LocalBinaryPatternHandler(8, 1, false, false);
 	}
 
 	@Test
 	public void testLBPCalculation() {
 		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1);
-		assertEquals(lbp, 13, 0.001);
+		assertEquals(lbp, 176, 0.001);
 	}
 
 	@Test
@@ -67,5 +67,33 @@ public class LocalBinaryPatternHandlerTest {
 
 		lbph.setUseUniformPatterns(true);
 		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 59);
+	}
+	
+	@Test
+	public void testIntegerToListConversions() {
+		List<Integer> l = lbph.convertIntegerToBinaryList(13);
+		int answer = lbph.convertBinaryListToInteger(l);
+		assertEquals(answer, 13);
+	}
+	
+	@Test
+	public void testRotationInvariance() { 
+		List<Integer> l = Arrays.asList(1,0,1,1);
+		List<Integer> r = lbph.findRotationInvariantSequence(l);
+		assertEquals(r, Arrays.asList(1,1,1,0));
+	}
+	
+	@Test
+	public void testIsRotationInvariant() {
+		lbph.setUseRotationInvariance(true);
+		lbph.setUseUniformPatterns(false);
+		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 37);
+	}
+	
+	@Test
+	public void testIsRotationInvariantAndUsesUniformPatterns () {
+		lbph.setUseRotationInvariance(true);
+		lbph.setUseUniformPatterns(true);
+		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 9);
 	}
 }

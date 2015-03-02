@@ -11,11 +11,12 @@ public class Application {
 
 		Mat img = readImageFromFile("/resources/lena.bmp");
 
-		LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler(8, 1,
-				true);
+		LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler(8, 1, true, true);
 
 		Mat newImg = lbph.calculateLBP(img);
 
+		System.out.println(lbph.findFeatureVector(img, 5));
+		
 		displayImage(newImg);
 	}
 }

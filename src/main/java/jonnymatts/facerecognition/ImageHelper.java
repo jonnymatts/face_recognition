@@ -1,12 +1,11 @@
 package jonnymatts.facerecognition;
 
-import static java.lang.Math.*;
-
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -25,22 +24,10 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 public class ImageHelper {
+	
+	public static List<LBPColour> lbpColourList = Arrays.asList(LBPColour.RED, LBPColour.GREEN, LBPColour.BLUE);
 
-	public static double bilinearInterpolation(Mat img, double x, double y) {
-
-		// Find values of the 4 surrounding cells
-		double xMin = floor(x);
-		int xMinIndex = (int) xMin;
-		double xMax = ceil(x);
-		int xMaxIndex = (int) xMax;
-		double yMin = floor(y);
-		int yMinIndex = (int) yMin;
-		double yMax = ceil(y);
-		int yMaxIndex = (int) yMax;
-		double x1 = img.get(yMinIndex, xMinIndex)[0];
-		double x2 = img.get(yMinIndex, xMaxIndex)[0];
-		double x3 = img.get(yMaxIndex, xMinIndex)[0];
-		double x4 = img.get(yMaxIndex, xMaxIndex)[0];
+	public static double bilinearInterpolation(double x, double y, double xMin, double xMax, double yMin, double yMax, double x1, double x2, double x3, double x4) {
 
 		double xDistToMax = (xMax - x) / (xMax - xMin);
 		double xDistToMin = (x - xMin) / (xMax - xMin);

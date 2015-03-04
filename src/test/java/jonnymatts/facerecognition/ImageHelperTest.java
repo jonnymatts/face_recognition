@@ -1,6 +1,8 @@
 package jonnymatts.facerecognition;
 
 import static org.junit.Assert.*;
+import static java.lang.Math.ceil;
+import static java.lang.Math.floor;
 import static jonnymatts.facerecognition.ImageHelper.*;
 
 import org.junit.Before;
@@ -58,8 +60,25 @@ public class ImageHelperTest {
 		testMat.put(2, 0, 7);
 		testMat.put(2, 1, 8);
 		testMat.put(2, 2, 9);
+		
+		// Find values of the 4 surrounding cells
+		double px = 1.3;
+		double py = 0.5;
+		
+		double xMin = floor(px);
+		int xMinIndex = (int) xMin;
+		double xMax = ceil(px);
+		int xMaxIndex = (int) xMax;
+		double yMin = floor(py);
+		int yMinIndex = (int) yMin;
+		double yMax = ceil(py);
+		int yMaxIndex = (int) yMax;
+		double x1 = testMat.get(yMinIndex, xMinIndex)[0];
+		double x2 = testMat.get(yMinIndex, xMaxIndex)[0];
+		double x3 = testMat.get(yMaxIndex, xMinIndex)[0];
+		double x4 = testMat.get(yMaxIndex, xMaxIndex)[0];
 
-		double intVal = bilinearInterpolation(testMat, 1.3, 0.5);
+		double intVal = bilinearInterpolation(px, py, xMin, xMax, yMin, yMax, x1, x2, x3, x4);
 
 		assertEquals(intVal, 3.8, 0.001);
 	}

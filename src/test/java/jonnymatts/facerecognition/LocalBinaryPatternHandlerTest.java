@@ -29,12 +29,12 @@ public class LocalBinaryPatternHandlerTest {
 		testMat.put(2, 1, 7);
 		testMat.put(2, 2, 1);
 
-		lbph = new LocalBinaryPatternHandler(8, 1, false, false);
+		lbph = new LocalBinaryPatternHandler(8, 1, false, false, false);
 	}
 
 	@Test
 	public void testLBPCalculation() {
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, LBPColour.GREY);
 		assertEquals(lbp, 176, 0.001);
 	}
 
@@ -42,7 +42,7 @@ public class LocalBinaryPatternHandlerTest {
 	public void testLBPCalculationMin() {
 		testMat.put(1, 1, 8);
 
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, LBPColour.GREY);
 		assertEquals(lbp, 0, 0.001);
 	}
 
@@ -50,15 +50,8 @@ public class LocalBinaryPatternHandlerTest {
 	public void testLBPCalculationMax() {
 		testMat.put(1, 1, 0);
 
-		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1);
+		Double lbp = lbph.calculateLBPForPixel(testMat, 1, 1, LBPColour.GREY);
 		assertEquals(lbp, 255, 0.001);
-	}
-
-	@Test
-	public void testLBPFeatureExtraction() {
-		List<List<Double>> lbp = lbph.findFeatureVector(testMat, 1);
-		assertEquals(lbp.get(0).get(0), 8, 0.001);
-		assertEquals(lbp.get(0).get(1), 0, 0.001);
 	}
 
 	@Test
@@ -95,5 +88,13 @@ public class LocalBinaryPatternHandlerTest {
 		lbph.setUseRotationInvariance(true);
 		lbph.setUseUniformPatterns(true);
 		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 9);
+	}
+	
+	@Test
+	public void testUsesRGB () {
+		lbph.setUseRotationInvariance(false);
+		lbph.setUseUniformPatterns(false);
+		lbph.setUseRGB(true);
+		assertEquals(lbph.findFeatureVector(testMat, 5).size(), (75));
 	}
 }

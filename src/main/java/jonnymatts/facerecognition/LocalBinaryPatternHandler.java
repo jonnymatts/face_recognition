@@ -5,7 +5,6 @@ import static java.lang.Math.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.*;
 
@@ -18,6 +17,7 @@ public class LocalBinaryPatternHandler {
 
 	private boolean useUniformPatterns;
 	private boolean useRotationInvariance;
+	private boolean useRGB;
 	private int population;
 	private int radius;
 	private List<Double> histogramBinList;
@@ -46,12 +46,17 @@ public class LocalBinaryPatternHandler {
 	public void setUseRotationInvariance(boolean b) {
 		useRotationInvariance = b;
 	}
+	
+	public void setUseRGB(boolean b) {
+		useRGB = b;
+	}
 
-	public LocalBinaryPatternHandler(int p, int r, boolean u, boolean ri) {
+	public LocalBinaryPatternHandler(int p, int r, boolean u, boolean ri, boolean rgb) {
 		population = p;
 		radius = r;
 		useUniformPatterns = u;
 		useRotationInvariance = ri;
+		useRGB = rgb;
 		histogramBinList = createHistogramBinList();
 	}
 
@@ -143,9 +148,54 @@ public class LocalBinaryPatternHandler {
 		}
 		return sum;
 	}
+	
+	private List<Double> convertImageToHistogram(Mat img) {
+		// Choose correct size for output histogram
+		int histSize;
+		if (useUniformPatterns && useRotationInvariance) {
+			histSize = histogramBinList.size() + 1;
+		} else if (useUniformPatterns) {
+			histSize = histogramBinList.size() + 1;
+		} else if (useRotationInvariance) {
+			histSize = histogramBinList.size() + 1;
+		} else {
+			histSize = (int) pow(2, (double) population);
+		}
+
+		// Create histogram list for sub-image
+		Double[] histArr = new Double[histSize];
+
+		// Fill histogram with default values (0)
+		Arrays.fill(histArr, 0d);
+		List<Double> imgHist = Arrays.asList(histArr);
+
+		List<Double> lbpValueList = convertMatToList(img);
+
+		// Limit values between 0 and maxValue
+		lbpValueList = lbpValueList.stream().map(v -> (double)round(max(0, min(histSize - 1, v)))).collect(Collectors.toList());
+		
+		// Populate histogram with LBP data
+		for (Double val : lbpValueList) {
+			Integer iVal = val.intValue();
+			if (useUniformPatterns || useRotationInvariance) {
+				if (histogramBinList.contains(val)) { 
+					imgHist.set(iVal, (imgHist.get(iVal) + 1));
+				} else {
+					int lastIndex = imgHist.size() - 1;
+					imgHist.set(lastIndex, (imgHist.get(lastIndex) + 1));
+				}
+			} else {
+				imgHist.set(iVal, (imgHist.get(iVal) + 1));
+			}
+		}
+
+		return imgHist;
+	}
 
 	// Find the feature vector for given image, population and radius
 	public List<List<Double>> findFeatureVector(Mat img, int noOfSubImgs) {
+		
+		if(!useRGB) img.convertTo(img, CvType.CV_8U);
 		
 		// Make sure uniformPatternList is correct
 		histogramBinList = createHistogramBinList();
@@ -167,61 +217,38 @@ public class LocalBinaryPatternHandler {
 			}
 		}
 
-		// Find histogram for each sub-image
+		// Create list for feature vector
 		List<List<Double>> histList = new ArrayList<List<Double>>();
+		
 		for (Mat subImg : subImgList) {
 
-			// Choose correct size for output histogram
-			int histSize;
-			if (useUniformPatterns && useRotationInvariance) {
-				histSize = histogramBinList.size() + 1;
-			} else if (useUniformPatterns) {
-				histSize = histogramBinList.size() + 1;
-			} else if (useRotationInvariance) {
-				histSize = histogramBinList.size() + 1;
+			if(!useRGB) {
+				// Find the LBP value at each pixel
+				Mat lbpImg = calculateLBP(subImg, LBPColour.RED);
+				
+				// Convert each sub-image into a histogram
+				List<Double> imgHist = convertImageToHistogram(lbpImg);
+				
+				histList.add(imgHist);
 			} else {
-				histSize = (int) pow(2, (double) population);
-			}
-			
-			// Create histogram list for sub-image
-			Double[] histArr = new Double[histSize];
-
-			// Fill histogram with default values (0)
-			Arrays.fill(histArr, 0d);
-			List<Double> imgHist = Arrays.asList(histArr);
-			Collections.fill(imgHist, 0d);
-
-			// Find the LBP value at each pixel
-			Mat lbpImg = calculateLBP(subImg);
-
-			List<Double> lbpValueList = convertMatToList(lbpImg);
-
-			// Limit values between 0 and maxValue
-			lbpValueList = lbpValueList.stream().map(v -> (double)round(min(histSize - 1, v))).collect(Collectors.toList());
-			
-			// Populate histogram with LBP data
-			for (Double val : lbpValueList) {
-				Integer iVal = val.intValue();
-				if (useUniformPatterns || useRotationInvariance) {
-					if (histogramBinList.contains(val)) { 
-						imgHist.set(iVal, (imgHist.get(iVal) + 1));
-					} else {
-						int lastIndex = imgHist.size() - 1;
-						imgHist.set(lastIndex, (imgHist.get(lastIndex) + 1));
-					}
-				} else {
-					imgHist.set(iVal, (imgHist.get(iVal) + 1));
+				for(LBPColour lbpColour : lbpColourList) {
+					
+					// Find the LBP value at each pixel
+					Mat lbpImg = calculateLBP(subImg, lbpColour);
+					
+					// Convert each sub-image into a histogram
+					List<Double> imgHist = convertImageToHistogram(lbpImg);
+					
+					histList.add(imgHist);
 				}
 			}
-
-			histList.add(imgHist);
 		}
-
+		
 		return histList;
 	}
 
 	// Calculate the LBP for each pixel within the image
-	Mat calculateLBP(Mat img) {
+	Mat calculateLBP(Mat img, LBPColour lbpColour) {
 		Mat lbpImg = new Mat(img.rows(), img.cols(), CvType.CV_64F);
 
 		for (int i = radius; i < (img.cols() - radius); i++) {
@@ -230,7 +257,7 @@ public class LocalBinaryPatternHandler {
 						|| (j > img.rows() - radius)) {
 					lbpImg.put(j, i, 0);
 				}
-				lbpImg.put(j, i, calculateLBPForPixel(img, i, j));
+				lbpImg.put(j, i, calculateLBPForPixel(img, i, j, lbpColour));
 			}
 		}
 
@@ -238,7 +265,7 @@ public class LocalBinaryPatternHandler {
 	}
 
 	// Calculate the LBP for each pixel within the image
-	Double calculateLBPForPixel(Mat img, int x, int y) {
+	Double calculateLBPForPixel(Mat img, int x, int y, LBPColour lbpColour) {
 		List<Double> nbhList = new ArrayList<Double>();
 
 		// Use linear interpolation to find circular LBP values
@@ -247,7 +274,32 @@ public class LocalBinaryPatternHandler {
 			double angle = i * anglePortion;
 			double px = x + (radius * cos(angle));
 			double py = y + (radius * sin(angle));
-			double value = ((px == 0) || (py == 0) || ((px % 1 == 0) && (py % 1 == 0))) ? img.get((int) round(py), (int) round(px))[0] : bilinearInterpolation(img, px, py);
+			
+			// Find values of the 4 surrounding cells
+			double xMin = floor(px);
+			int xMinIndex = (int) xMin;
+			double xMax = ceil(px);
+			int xMaxIndex = (int) xMax;
+			double yMin = floor(py);
+			int yMinIndex = (int) yMin;
+			double yMax = ceil(py);
+			int yMaxIndex = (int) yMax;
+			
+			double x1, x2, x3, x4;
+			if(!useRGB) {
+				x1 = img.get(yMinIndex, xMinIndex)[0];
+				x2 = img.get(yMinIndex, xMaxIndex)[0];
+				x3 = img.get(yMaxIndex, xMinIndex)[0];
+				x4 = img.get(yMaxIndex, xMaxIndex)[0];
+			} else {
+				x1 = img.get(yMinIndex, xMinIndex)[lbpColour.getValue()];
+				x2 = img.get(yMinIndex, xMaxIndex)[lbpColour.getValue()];
+				x3 = img.get(yMaxIndex, xMinIndex)[lbpColour.getValue()];
+				x4 = img.get(yMaxIndex, xMaxIndex)[lbpColour.getValue()];
+			}
+			
+			// Use bilinear interpolation if needed
+			double value = ((px == 0) || (py == 0) || ((px % 1 == 0) && (py % 1 == 0))) ? img.get((int) round(py), (int) round(px))[0] : bilinearInterpolation(px, py, xMin, xMax, yMin, yMax, x1, x2, x3, x4);
 			nbhList.add(value);
 		}
 
@@ -257,7 +309,7 @@ public class LocalBinaryPatternHandler {
 		// Convert list value to either 1 or 0
 		// if(value < centrePixelValue) 0 else 1
 		List<Integer> nbhBinList = nbhList.stream().map(d -> (d < centrePixelValue)).map(b -> b ? 0 : 1).collect(Collectors.toList());
-
+		
 		return convertBinaryListToInteger(nbhBinList).doubleValue();
 	}
 

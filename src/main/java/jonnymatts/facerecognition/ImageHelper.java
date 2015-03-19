@@ -26,6 +26,32 @@ import org.opencv.objdetect.CascadeClassifier;
 public class ImageHelper {
 	
 	public static List<LBPColour> lbpColourList = Arrays.asList(LBPColour.RED, LBPColour.GREEN, LBPColour.BLUE);
+	
+	public static boolean compareImages(Mat im1, Mat im2) {
+		Mat op = new Mat();
+		Core.compare(im1, im2, op, Core.CMP_NE);
+		return (Core.countNonZero(op) == 0);
+	}
+	
+	public static Mat convertRGBtoYUV(Mat in) {
+		Mat yuvImage = new Mat(in.rows(), in.cols(), CvType.CV_32FC3);
+		
+		for (int i = 0; i < in.cols(); i++) {
+			for (int j = 0; j < in.rows(); j++) {
+				double[] bgrArray = in.get(j,i);
+				double bVal = bgrArray[0];
+				double gVal = bgrArray[1];
+				double rVal = bgrArray[2];
+				float yVal = (float)((0.29f * rVal) + (0.587f * gVal) + (0.114f * bVal));
+				float uVal = (float)(0.492f * (bVal - yVal));
+				float vVal = (float)(0.877f * (rVal - yVal));
+				float[] yuvArray = {yVal, uVal, vVal};
+				yuvImage.put(j, i, yuvArray);
+			}
+		}
+		
+		return yuvImage;
+	}
 
 	public static double bilinearInterpolation(double x, double y, double xMin, double xMax, double yMin, double yMax, double x1, double x2, double x3, double x4) {
 
@@ -60,12 +86,12 @@ public class ImageHelper {
 	}
 
 	// Converts 2D matrix to 1D list
-	public static List<Double> convertMatToList(Mat input) {
+	public static List<Double> convertMatToList(Mat input, int index) {
 		List<Double> returnList = new ArrayList<Double>();
 
 		for (int i = 0; i < input.rows(); i++) {
 			for (int j = 0; j < input.cols(); j++) {
-				returnList.add((Double) input.get(i, j)[0]);
+				returnList.add((Double) input.get(i, j)[index]);
 			}
 		}
 		return returnList;

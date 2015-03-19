@@ -169,7 +169,7 @@ public class LocalBinaryPatternHandler {
 		Arrays.fill(histArr, 0d);
 		List<Double> imgHist = Arrays.asList(histArr);
 
-		List<Double> lbpValueList = convertMatToList(img);
+		List<Double> lbpValueList = convertMatToList(img, 0);
 
 		// Limit values between 0 and maxValue
 		lbpValueList = lbpValueList.stream().map(v -> (double)round(max(0, min(histSize - 1, v)))).collect(Collectors.toList());

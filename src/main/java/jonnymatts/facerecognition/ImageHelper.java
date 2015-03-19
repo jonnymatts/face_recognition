@@ -4,6 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -101,6 +102,11 @@ public class ImageHelper {
 		String dir = System.getProperty("user.dir");
 		Mat img = Highgui.imread(dir + filename);
 		return img;
+	}
+	
+	public static File loadFile(String filename) {
+		String dir = System.getProperty("user.dir");
+		return new File(dir + filename);
 	}
 
 	// Applies the supplied feature detector to the suppplied image

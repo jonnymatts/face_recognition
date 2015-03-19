@@ -20,5 +20,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/opencv-2.4.10"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/jonnymatts/dev/javaml-0.1.5/lib/weka.jar"/>
+	<classpathentry kind="lib" path="/Users/jonnymatts/dev/javaml-0.1.5/lib/libsvm.jar"/>
+	<classpathentry kind="lib" path="/Users/jonnymatts/dev/javaml-0.1.5/lib/Jama-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/jonnymatts/dev/javaml-0.1.5/lib/commons-math-1.2.jar"/>
+	<classpathentry kind="lib" path="/Users/jonnymatts/dev/javaml-0.1.5/lib/ajt-1.20.jar"/>
+	<classpathentry kind="lib" path="/Users/jonnymatts/dev/javaml-0.1.5/javaml-0.1.5.jar" sourcepath="/Users/jonnymatts/dev/javaml-0.1.5/javaml-0.1.5-src.zip"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

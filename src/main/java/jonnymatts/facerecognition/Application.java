@@ -2,6 +2,10 @@ package jonnymatts.facerecognition;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import net.sf.javaml.classification.Classifier;
@@ -40,20 +44,18 @@ public class Application {
 										  readImageFromFile("/resources/face_testing_images/19.bmp"),
 										  readImageFromFile("/resources/face_testing_images/20.bmp"));
 		
-//		Dataset data = FileHandler.loadDataset(loadFile("/resources/image-classification-test/image_test_knn_lbp.data"), 0, ",");
-//		System.out.println(data.classes());
-//		Classifier knn = new KNearestNeighbors(1);
-//		knn.buildClassifier(data);
-//		
-//		Dataset testData = FileHandler.loadDataset(loadFile("/resources/image-classification-test/image_test_knn_lbp_single.data"), 0, ",");
-//		
-//		for (Instance inst : testData) {
-//			Object predictedClassValue = knn.classify(inst);
-//			Object realClassValue = inst.classValue();
-//			System.out.println(predictedClassValue);
-//			System.out.println(realClassValue);
-//		}
-
-		LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler(8, 1, false, false, false);
+		Dataset data = FileHandler.loadDataset(loadFile("/resources/image-classification-test/knn_lbp.data"), 0, ",");
+		System.out.println(data.classes());
+		Classifier knn = new KNearestNeighbors(1);
+		knn.buildClassifier(data);
+		
+		Dataset testData = FileHandler.loadDataset(loadFile("/resources/image-classification-test/knn_lbp_single.data"), 0, ",");
+		
+		for (Instance inst : testData) {
+			Object predictedClassValue = knn.classify(inst);
+			Object realClassValue = inst.classValue();
+			System.out.println(predictedClassValue);
+			System.out.println(realClassValue);
+		}
 	}
 }

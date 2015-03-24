@@ -12,6 +12,9 @@ import org.opencv.core.Mat;
 
 public class EigenfaceHandler {
 
+	private Mat blueChannelMeanImage;
+	private Mat greenChannelMeanImage;
+	private Mat redChannelMeanImage;
 	private List<Mat> trainingImageList;
 	private List<List<Mat>> eigenfaceList;
 	
@@ -26,6 +29,45 @@ public class EigenfaceHandler {
 		}
 	}
 	
+	List<List<Double>> calculateWeightsForGivenImage(Mat img) {
+		List<List<Double>> returnList = new ArrayList<List<Double>>();
+		
+		List<Mat> blueEigenfaceList = eigenfaceList.get(0);
+		List<Mat> greenEigenfaceList = eigenfaceList.get(1);
+		List<Mat> redEigenfaceList = eigenfaceList.get(2);
+		
+		// Create eigenface matrix for each colour channel
+		int imageSize = (int)blueEigenfaceList.get(0).size().area();
+		Mat blueEigenfaceMat = convertImageListToSingleMatrix(blueEigenfaceList, blueEigenfaceList.size(), imageSize);
+		Mat greenEigenfaceMat = convertImageListToSingleMatrix(greenEigenfaceList, blueEigenfaceList.size(), imageSize);
+		Mat redEigenfaceMat = convertImageListToSingleMatrix(redEigenfaceList, blueEigenfaceList.size(), imageSize);
+		
+		// Subtract mean image of each colour channel from image
+		Mat meanSubtractedImage = subtractImageFromMultiChannelImage(img, blueChannelMeanImage, greenChannelMeanImage, redChannelMeanImage);
+		
+		Mat blueEigenfaceWeights = new Mat();
+		Mat greenEigenfaceWeights = new Mat();
+		Mat redEigenfaceWeights = new Mat();
+		
+		// Multiply mean subtracted image by transpose of eigenface matrix
+		Core.gemm(convertImageToSingleRowMatrix(meanSubtractedImage, 0), blueEigenfaceMat.t(), 1, new Mat(), 0,
+				blueEigenfaceWeights, 0);
+		
+		Core.gemm(convertImageToSingleRowMatrix(meanSubtractedImage, 1), greenEigenfaceMat.t(), 1, new Mat(), 0,
+				greenEigenfaceWeights, 0);
+		
+		Core.gemm(convertImageToSingleRowMatrix(meanSubtractedImage, 2), redEigenfaceMat.t(), 1, new Mat(), 0,
+				redEigenfaceWeights, 0);
+		
+		System.out.println(blueEigenfaceWeights.dump());
+		System.out.println(greenEigenfaceWeights.dump());
+		System.out.println(redEigenfaceWeights.dump());
+		
+		return Arrays.asList(convertMatToList(blueEigenfaceWeights, 0),
+							 convertMatToList(greenEigenfaceWeights, 0),
+							 convertMatToList(redEigenfaceWeights, 0)); 
+	}
+	
 	List<Mat> findEigenvectorsForMatrix(Mat in) {
 		// Mutliply each A-Matrix by it's transpose, then find eigenvectors of inner product matrix
 		Mat lMatrix = new Mat();
@@ -36,6 +78,7 @@ public class EigenfaceHandler {
 
 		Core.gemm(in, in.t(), 1, new Mat(), 0, lMatrix, 0);
 
+		// Find eigenvectors and eigenvalues 
 		Core.eigen(lMatrix, true, innerProductEigenValues,
 				innerProductEigenVectors);
 
@@ -81,6 +124,11 @@ public class EigenfaceHandler {
 			}
 		}
 		
+		// Save the mean images for use later
+		blueChannelMeanImage = bMeanMatrix;
+		greenChannelMeanImage = gMeanMatrix;
+		redChannelMeanImage = rMeanMatrix;
+		
 		// Find the mean subtracted value for each image and channel
 		List<Mat> meanSubtractedTrainingImageList = new ArrayList<Mat>();
 		for(Mat im : trainingImageList) {
@@ -99,13 +147,13 @@ public class EigenfaceHandler {
 		int rowIndex = 0;
 		// Create A matrix containing all images, one per row
 		for(Mat im : meanSubtractedTrainingImageList) {
-			List<Double> yImList = convertMatToList(im, 0);
-			List<Double> uImList = convertMatToList(im, 1);
-			List<Double> vImList = convertMatToList(im, 2);
-			for(int i = 0; i < yImList.size(); i++) {
-				bAMatrix.put(rowIndex, i, yImList.get(i));
-				gAMatrix.put(rowIndex, i, uImList.get(i));
-				rAMatrix.put(rowIndex, i, vImList.get(i));
+			List<Double> bImList = convertMatToList(im, 0);
+			List<Double> gImList = convertMatToList(im, 1);
+			List<Double> rImList = convertMatToList(im, 2);
+			for(int i = 0; i < bImList.size(); i++) {
+				bAMatrix.put(rowIndex, i, bImList.get(i));
+				gAMatrix.put(rowIndex, i, gImList.get(i));
+				rAMatrix.put(rowIndex, i, rImList.get(i));
 			}
 			rowIndex++;
 		}

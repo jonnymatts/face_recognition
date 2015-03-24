@@ -44,18 +44,8 @@ public class Application {
 										  readImageFromFile("/resources/face_testing_images/19.bmp"),
 										  readImageFromFile("/resources/face_testing_images/20.bmp"));
 		
-		Dataset data = FileHandler.loadDataset(loadFile("/resources/image-classification-test/knn_lbp.data"), 0, ",");
-		System.out.println(data.classes());
-		Classifier knn = new KNearestNeighbors(1);
-		knn.buildClassifier(data);
+		EigenfaceHandler efh = new EigenfaceHandler(imgList);
 		
-		Dataset testData = FileHandler.loadDataset(loadFile("/resources/image-classification-test/knn_lbp_single.data"), 0, ",");
-		
-		for (Instance inst : testData) {
-			Object predictedClassValue = knn.classify(inst);
-			Object realClassValue = inst.classValue();
-			System.out.println(predictedClassValue);
-			System.out.println(realClassValue);
-		}
+		efh.calculateWeightsForGivenImage(imgList.get(0));
 	}
 }

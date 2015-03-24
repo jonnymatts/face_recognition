@@ -28,6 +28,66 @@ public class ImageHelper {
 	
 	public static List<LBPColour> lbpColourList = Arrays.asList(LBPColour.RED, LBPColour.GREEN, LBPColour.BLUE);
 	
+	public static Mat convertImageToSingleRowMatrix(Mat img, int channel) {
+		
+		// Not sure why, but needed otherwise returnImage is emtpy???
+		img.dump();
+		
+		Mat returnImage = new Mat(1, (int)img.size().area(), CvType.CV_64FC1);
+		
+		int index = 0;
+		for(int i = 0; i < img.cols(); i++) {
+			for(int j = 0; j < img.rows(); j++) {
+				returnImage.put(1, index, img.get(j, i)[channel]);
+			}
+		}
+		
+		return returnImage;
+	}
+	
+	public static List<Mat> convertMultiChannelImageToImageList(Mat img) {
+		Mat blueImg = new Mat(img.rows(), img.cols(), CvType.CV_64FC1);
+		Mat greenImg = new Mat(img.rows(), img.cols(), CvType.CV_64FC1);
+		Mat redImg = new Mat(img.rows(), img.cols(), CvType.CV_64FC1);
+		
+		for(int i = 0; i < img.cols(); i++) {
+			for(int j = 0; j < img.rows(); j++) {
+				blueImg.put(j, i, img.get(j, i)[0]);
+				greenImg.put(j, i, img.get(j, i)[1]);
+				redImg.put(j, i, img.get(j, i)[2]);
+			}
+		}
+		
+		return Arrays.asList(blueImg, greenImg, redImg);
+	}
+	
+	public static Mat subtractImageFromMultiChannelImage(Mat img, Mat channel1, Mat channel2, Mat channel3) {
+		Mat subtractedImage = img.clone();
+		for(int i = 0; i < img.cols(); i++) {
+			for(int j = 0; j < img.rows(); j++) {
+				double[] vals = subtractedImage.get(j, i);
+				double[] newVals = {(vals[0] - channel1.get(j, i)[0]), (vals[1] - channel2.get(j, i)[0]),
+									(vals[2] - channel3.get(j, i)[0])};
+				subtractedImage.put(j, i, newVals);
+			}
+		}
+		return subtractedImage;
+	}
+	
+	public static Mat convertImageListToSingleMatrix(List<Mat> imgList, int rows, int cols) {
+		Mat returnMatrix = new Mat(rows, cols, CvType.CV_64F);
+		int rowIndex = 0;
+		// Create matrix containing all images, one per row
+		for(Mat im : imgList) {
+			List<Double> imValList = convertMatToList(im, 0);
+			for(int i = 0; i < imValList.size(); i++) {
+				returnMatrix.put(rowIndex, i, imValList.get(i));
+			}
+			rowIndex++;
+		}
+		return returnMatrix;
+	}
+	
 	public static boolean compareImages(Mat im1, Mat im2) {
 		Mat op = new Mat();
 		Core.compare(im1, im2, op, Core.CMP_NE);

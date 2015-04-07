@@ -15,6 +15,7 @@ import net.sf.javaml.core.Instance;
 import net.sf.javaml.tools.data.FileHandler;
 
 import org.opencv.core.*;
+import org.opencv.imgproc.Imgproc;
 
 import static jonnymatts.facerecognition.ImageHelper.*;
 
@@ -23,29 +24,12 @@ public class Application {
 		// Load .dylib file for openCV
 		System.load("/usr/local/Cellar/opencv/2.4.10.1/share/OpenCV/java/libopencv_java2410.dylib");
 		
-		List<Mat> imgList = Arrays.asList(readImageFromFile("/resources/face_testing_images/1.bmp"),
-										  readImageFromFile("/resources/face_testing_images/2.bmp"),
-										  readImageFromFile("/resources/face_testing_images/3.bmp"),
-										  readImageFromFile("/resources/face_testing_images/4.bmp"),
-										  readImageFromFile("/resources/face_testing_images/5.bmp"),
-										  readImageFromFile("/resources/face_testing_images/6.bmp"),
-										  readImageFromFile("/resources/face_testing_images/7.bmp"),
-										  readImageFromFile("/resources/face_testing_images/8.bmp"),
-										  readImageFromFile("/resources/face_testing_images/9.bmp"),
-										  readImageFromFile("/resources/face_testing_images/10.bmp"),
-										  readImageFromFile("/resources/face_testing_images/11.bmp"),
-										  readImageFromFile("/resources/face_testing_images/12.bmp"),
-										  readImageFromFile("/resources/face_testing_images/13.bmp"),
-										  readImageFromFile("/resources/face_testing_images/14.bmp"),
-										  readImageFromFile("/resources/face_testing_images/15.bmp"),
-										  readImageFromFile("/resources/face_testing_images/16.bmp"),
-										  readImageFromFile("/resources/face_testing_images/17.bmp"),
-										  readImageFromFile("/resources/face_testing_images/18.bmp"),
-										  readImageFromFile("/resources/face_testing_images/19.bmp"),
-										  readImageFromFile("/resources/face_testing_images/20.bmp"));
+		Mat img = readImageFromFile("/resources/face_testing_images/1.bmp");
+		Mat depthImg = normaliseDepthImage(readImageFromFile("/resources/face_testing_images/1_depth.bmp"));
 		
-		EigenfaceHandler efh = new EigenfaceHandler(imgList);
+		RISEHandler rh = new RISEHandler(3, 15, 1, (img.rows() / 10), 0.02, 15, 230, 30);
 		
-		efh.calculateWeightsForGivenImage(imgList.get(0));
+		rh.findFeatureVector(img, depthImg);
+		
 	}
 }

@@ -59,10 +59,6 @@ public class EigenfaceHandler {
 		Core.gemm(convertImageToSingleRowMatrix(meanSubtractedImage, 2), redEigenfaceMat.t(), 1, new Mat(), 0,
 				redEigenfaceWeights, 0);
 		
-		System.out.println(blueEigenfaceWeights.dump());
-		System.out.println(greenEigenfaceWeights.dump());
-		System.out.println(redEigenfaceWeights.dump());
-		
 		return Arrays.asList(convertMatToList(blueEigenfaceWeights, 0),
 							 convertMatToList(greenEigenfaceWeights, 0),
 							 convertMatToList(redEigenfaceWeights, 0)); 

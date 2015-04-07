@@ -1,5 +1,7 @@
 package jonnymatts.facerecognition;
 
+import static java.lang.Math.*;
+
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -8,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -20,6 +23,7 @@ import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
@@ -27,6 +31,164 @@ import org.opencv.objdetect.CascadeClassifier;
 public class ImageHelper {
 	
 	public static List<LBPColour> lbpColourList = Arrays.asList(LBPColour.RED, LBPColour.GREEN, LBPColour.BLUE);
+	
+	public static double featureMapSum(List<Mat> mapList, int i, int j) {
+		double sum = 0;
+		for(int k = 0; k < mapList.size(); k++) {
+			sum += mapList.get(k).get(j, i)[0];
+		}
+		return sum;
+	}
+	
+	public static List<Mat> resizeFeatureMaps(List<Mat> mapList, int dimension) {
+		return mapList.stream().map(m -> resizeImageIfNeeded(m, dimension)).collect(Collectors.toList());
+	}
+	
+	public static Mat resizeImageIfNeeded(Mat img, int dimension) {
+		Mat returnImage = img;
+		if(img.rows() != dimension) Imgproc.resize(img, returnImage, new Size(dimension, dimension));
+		return returnImage;
+	}
+	
+	public static List<Mat> normaliseFeatureMapList(List<Mat> mapList, int localNeighbourhoodSize, double maxima, double differenceCutoff) {
+		return mapList.stream().map(m -> normaliseFeatureMap(m, localNeighbourhoodSize, maxima, differenceCutoff)).collect(Collectors.toList());
+	}
+	
+	public static Mat normaliseFeatureMap(Mat img, int localNeighbourhoodSize, double maxima, double differenceCutoff) {
+		
+		// Find smallest and highest value within image
+		double smallestValue = findSmallestValueForSingleChannelImage(img);
+		double highestValue = findHighestValueForSingleChannelImage(img);
+		
+		// Normalise values between 0 and maxima, and find index of global maxima
+		Mat normalisedImage = img.clone();
+		int globalMaximaX = -1;
+		int globalMaximaY = -1;
+		double multiplicationFactor = maxima / highestValue;
+		double newHighestValue = 0;
+		for(int i = 0; i < img.cols(); i++) {
+			for(int j = 0; j < img.rows(); j++) {
+				double val = ((img.get(j, i)[0] - smallestValue) * multiplicationFactor);
+				if(val > newHighestValue) {
+					globalMaximaX = i;
+					globalMaximaY = j;
+					newHighestValue = val;
+				}
+				normalisedImage.put(j, i, val);
+			}
+		}
+		
+		// Needed to ensure that resolution is not lost in return image, no idea why
+		Mat2BufferedImage(normalisedImage);
+		
+		for(int i = 0; i < img.cols(); i++) {
+			for(int j = 0; j < img.rows(); j++) {
+				// Get pixel value
+				double pixelVal = normalisedImage.get(j, i)[0];
+				// Find mean of local maxima values around global maxima
+				int nBoundary = ((localNeighbourhoodSize + 1) / 2) - 1; 
+				int nXMinIndex = max(0, (globalMaximaX - nBoundary));
+				int nXMaxIndex = min(img.cols(), (globalMaximaX + nBoundary));
+				int nYMinIndex = max(0, (globalMaximaY - nBoundary));
+				int nYMaxIndex = min(img.rows(), (globalMaximaY + nBoundary));
+				
+				double localSum = 0;
+				int localCount = 0;
+				for(int k = nXMinIndex; k < nXMaxIndex; k++) {
+					for(int l = nYMinIndex; l < nYMaxIndex; l++) {
+						double val = normalisedImage.get(l, k)[0];
+						localSum += val;
+						localCount++;
+					}
+				}
+				
+				double localAverage = localSum / localCount;
+				double localDifference = abs(pixelVal - localAverage);
+				
+				double newVal = (localDifference > differenceCutoff) ? (pixelVal) : 0;
+				normalisedImage.put(j, i, newVal);
+			}
+		}
+		
+		return normalisedImage;
+	}
+	
+	public static Mat normaliseDepthImage(Mat img) {
+		
+		Mat returnImg = new Mat(img.rows(), img.cols(), CvType.CV_64FC1);
+		
+		for(int i = 0; i < img.cols(); i++) {
+			for(int j = 0; j < img.rows(); j++) {
+				double val = img.get(j, i)[0];
+				if(val == 255d) {
+					returnImg.put(j, i, 254.0);
+				} else {
+					returnImg.put(j, i, val);
+				}
+				
+			}
+		}
+		
+		return returnImg;
+	}
+	
+	public static List<Mat> findGaborPyramidForImage(Mat img, int scale, int kSize, double sigma, double theta,
+													 double lambda, double gamma) {
+		List<Mat> gaborPyramid = new ArrayList<Mat>();
+		gaborPyramid.add(img);
+		Mat currentImage = img;
+		for(int i = 0; i < scale; i++) {
+			Mat filteredImage = new Mat();
+			Mat reducedImage = new Mat();
+			Mat gKernel = Imgproc.getGaborKernel(new Size(kSize, kSize), sigma, theta, lambda, gamma);
+			Imgproc.filter2D(currentImage, filteredImage, CvType.CV_64F, gKernel);
+			Imgproc.resize(filteredImage, reducedImage, new Size(currentImage.cols()/2, currentImage.rows()/2));
+			gaborPyramid.add(reducedImage);
+			currentImage = reducedImage;
+		}
+		return gaborPyramid;
+	}
+	
+	public static List<Mat> findGaussianPyrmaidForImage(Mat img, int scale) {
+		List<Mat> gaussianPyramid = new ArrayList<Mat>();
+		gaussianPyramid.add(img);
+		Mat currentImage = img;
+		for (int i = 0; i < scale; i++) {
+			Mat reducedImage = new Mat();
+			Imgproc.pyrDown(currentImage, reducedImage);
+			gaussianPyramid.add(reducedImage);
+			currentImage = reducedImage;
+		}
+		return gaussianPyramid;
+	}
+	
+	public static Mat normaliseEntropyImage(Mat img) {
+		
+		Mat returnImage = img.clone();
+		
+		// Find highest value in list
+		List<Double> valueList = convertMatToList(returnImage, 0);
+		List<Double> sortedList = valueList.stream().sorted((a, b) -> Double.compare(a, b)).collect(Collectors.toList());
+		
+		// Shift all values so smallest value is always 0, multiply so max is 255
+		Double smallestValue = sortedList.get(0);
+		Double highestValue = sortedList.get(sortedList.size() - 1);
+		Double multiplicationFactor = 255 / highestValue;
+		
+		if(smallestValue != 0) {
+			for(int i = 0; i < img.cols(); i++) {
+				for(int j = 0; j < img.rows(); j++) {
+					if(smallestValue < 0) {
+						returnImage.put(j, i, ((returnImage.get(j, i)[0] - smallestValue) * multiplicationFactor));
+					} else {
+						returnImage.put(j, i, ((returnImage.get(j, i)[0] + smallestValue) * multiplicationFactor));
+					}
+				}
+			}
+		}
+		
+		return returnImage;
+	}
 	
 	public static Mat convertImageToSingleRowMatrix(Mat img, int channel) {
 		
@@ -61,6 +223,16 @@ public class ImageHelper {
 		return Arrays.asList(blueImg, greenImg, redImg);
 	}
 	
+	public static Mat subtractSingleChannelImages(Mat img1, Mat img2) {
+		Mat subtractedImage = img1.clone();
+		for(int i = 0; i < img1.cols(); i++) {
+			for(int j = 0; j < img1.rows(); j++) {
+				subtractedImage.put(j, i, (img1.get(j, i)[0] - img2.get(j, i)[0]));
+			}
+		}
+		return subtractedImage;
+	}
+	
 	public static Mat subtractImageFromMultiChannelImage(Mat img, Mat channel1, Mat channel2, Mat channel3) {
 		Mat subtractedImage = img.clone();
 		for(int i = 0; i < img.cols(); i++) {
@@ -86,6 +258,28 @@ public class ImageHelper {
 			rowIndex++;
 		}
 		return returnMatrix;
+	}
+	
+	public static double findSmallestValueForSingleChannelImage(Mat img) {
+		double smallestValue = 255;
+		for (int i = 0; i < img.cols(); i++) {
+			for (int j = 0; j < img.rows(); j++) {
+				double val = img.get(j, i)[0];
+				if(val < smallestValue) smallestValue = val;
+			}
+		}
+		return smallestValue;
+	}
+	
+	public static double findHighestValueForSingleChannelImage(Mat img) {
+		double highestValue = 0;
+		for (int i = 0; i < img.cols(); i++) {
+			for (int j = 0; j < img.rows(); j++) {
+				double val = img.get(j, i)[0];
+				if(val > highestValue) highestValue = val;
+			}
+		}
+		return highestValue;
 	}
 	
 	public static boolean compareImages(Mat im1, Mat im2) {
@@ -152,7 +346,7 @@ public class ImageHelper {
 
 		for (int i = 0; i < input.rows(); i++) {
 			for (int j = 0; j < input.cols(); j++) {
-				returnList.add((Double) input.get(i, j)[index]);
+				returnList.add(new Double(input.get(i, j)[index]));
 			}
 		}
 		return returnList;
@@ -187,6 +381,12 @@ public class ImageHelper {
 		}
 
 		return img;
+	}
+	
+	public static void displayImageList(List<Mat> imgList) {
+		for(Mat img : imgList) {
+			displayImage(img);
+		}
 	}
 
 	public static void displayImage(Mat mat) {

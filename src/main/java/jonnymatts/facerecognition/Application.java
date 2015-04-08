@@ -27,9 +27,8 @@ public class Application {
 		Mat img = readImageFromFile("/resources/face_testing_images/1.bmp");
 		Mat depthImg = normaliseDepthImage(readImageFromFile("/resources/face_testing_images/1_depth.bmp"));
 		
-		RISEHandler rh = new RISEHandler(3, 15, 1, (img.rows() / 10), 0.02, 15, 230, 30);
+		RISEHandler rh = new RISEHandler(3, 15, 1, (img.rows() / 10), 0.02, 15, 230, 30, 25);
 		
-		rh.findFeatureVector(img, depthImg);
-		
+		System.out.println(rh.findFeatureVector(img, depthImg));
 	}
 }

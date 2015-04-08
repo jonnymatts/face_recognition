@@ -4,9 +4,11 @@ import static java.lang.Math.*;
 import static jonnymatts.facerecognition.ImageHelper.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -22,8 +24,9 @@ public class RISEHandler {
 	private int localNeighbourhoodSize;
 	private double maxima;
 	private double differenceCutoff;
+	private double pixelsPerHOGCell;
 	
-	public RISEHandler(int r, int ks, double s, double l, double g, int lns, double m, double lmc) {
+	public RISEHandler(int r, int ks, double s, double l, double g, int lns, double m, double lmc, double pphc) {
 		radius = r;
 		kSize = ks;
 		sigma = s;
@@ -32,10 +35,34 @@ public class RISEHandler {
 		localNeighbourhoodSize = lns;
 		maxima = m;
 		differenceCutoff = lmc;
+		pixelsPerHOGCell = pphc;
 	}
 	
-	public List<Double> findFeatureVector(Mat image, Mat depthImage) {
-		List<Double> returnList = new ArrayList<Double>();
+	List<Mat> createCellImageList(Mat image) {
+		
+		// Split image into grid of sub-images
+		List<Mat> subImgList = new ArrayList<Mat>();
+		int noOfImagesWidth = (int)ceil(image.cols() / pixelsPerHOGCell);
+		int noOfImagesHeight = (int)ceil(image.rows() / pixelsPerHOGCell);
+
+		for (int i = 0; i < noOfImagesWidth; i++) {
+			for (int j = 0; j < noOfImagesHeight; j++) {
+
+				int pixels = (int)pixelsPerHOGCell;
+				// Find x and y values for sub-image vertices
+				int iIndex = i * pixels;
+				int jIndex = j * pixels;
+				int iIndex2 = min((iIndex + pixels), image.cols());
+				int jIndex2 = min((jIndex + pixels), image.rows());
+				subImgList.add(image.submat(jIndex, jIndex2, iIndex, iIndex2));
+			}
+		}
+		
+		return subImgList;
+	}
+	
+	public List<List<List<Double>>> findFeatureVector(Mat image, Mat depthImage) {
+		List<List<List<Double>>> histogramList = new ArrayList<List<List<Double>>>();
 		
 		// Find the four entropy maps of the image
 		List<Mat> entropyMapList = new ArrayList<Mat>();
@@ -49,10 +76,62 @@ public class RISEHandler {
 		// Find the saliency map of the image
 		Mat saliencyMap = findSaliencyMap(image);
 		
-		displayImageList(entropyMapList);
-		displayImage(saliencyMap);
+		// Find histograms for each map
+		for(Mat eMap : entropyMapList) {
+			List<Mat> cellImageList = createCellImageList(eMap);
+			List<List<Double>> cellHistogramList = cellImageList.stream().map(i -> calculateHistogramOfGradients(i)).collect(Collectors.toList());
+			histogramList.add(cellHistogramList);
+		}
 		
-		return returnList;
+		List<Mat> saliencyCellImageList = createCellImageList(saliencyMap);
+		List<List<Double>> saliencyHistogramList = saliencyCellImageList.stream().map(i -> calculateHistogramOfGradients(i)).collect(Collectors.toList());
+		histogramList.add(saliencyHistogramList);
+		
+		return histogramList;
+	}
+	
+	List<Double> calculateHistogramOfGradients(Mat image) {
+		Double[] binValues = {0d, 20d, 40d, 60d, 80d, 100d, 120d, 140d, 160d, 180d};
+		Double[] gradientHistogram = new Double[binValues.length];
+		Arrays.fill(gradientHistogram, 0d);
+		
+		// Find gradient and direction at each pixel and add to histogram
+		Mat xSobelImage = new Mat();
+		Mat ySobelImage = new Mat();
+		Imgproc.Sobel(image, xSobelImage, -1, 1, 0);
+		Imgproc.Sobel(image, ySobelImage, -1, 0, 1);
+		
+		for (int i = 0; i < image.cols(); i++) {
+			for (int j = 0; j < image.rows(); j++) {
+				double xVal = xSobelImage.get(j, i)[0];
+				double yVal = ySobelImage.get(j, i)[0];
+				double magnitude = sqrt(pow(xVal, 2) + pow(yVal, 2));
+				double direction = toDegrees(atan2(yVal, xVal));
+				
+				List<Double> binValuesList = Arrays.asList(binValues);
+				if(binValuesList.contains(direction)) {
+					int index = binValuesList.indexOf(direction);
+					double val = gradientHistogram[index];
+					gradientHistogram[index] = val + round(magnitude);
+				} else {
+					
+					// Find which bins to add to
+					int minIndex = 0;
+					for(int k = 0; k < binValues.length; k++) {
+						if(direction > binValues[k]) minIndex = k;
+					}
+					
+					// Find the weighted value to add to each bin
+					double minIndexDifference = direction - binValues[minIndex];
+					double minWeightValue = 1 - (minIndexDifference / 20);
+					
+					gradientHistogram[minIndex] += abs(round(minWeightValue * magnitude));
+					gradientHistogram[minIndex + 1] += abs(round((1 - minWeightValue) * magnitude));
+				}
+			}
+		}
+		
+		return Arrays.asList(gradientHistogram);
 	}
 	
 	private Mat createColourFeatureMap(List<Mat> pyramid1, List<Mat> pyramid2, int c, int d) {

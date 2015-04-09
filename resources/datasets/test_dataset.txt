@@ -1,0 +1,1 @@
+0,2,0,/resources/face_testing_images/1.bmp,/resources/face_testing_images/1_depth.bmp

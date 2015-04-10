@@ -64,14 +64,17 @@ public class RISEHandler {
 	public List<List<List<Double>>> findFeatureVector(Mat image, Mat depthImage) {
 		List<List<List<Double>>> histogramList = new ArrayList<List<List<Double>>>();
 		
+		// Normalise depth image
+		Mat normalisedDepthImage = normaliseDepthImage(depthImage);
+		
 		// Find the four entropy maps of the image
 		List<Mat> entropyMapList = new ArrayList<Mat>();
 		int width = ((image.cols() * 3) / 4);
 		int height = ((image.rows() * 3) / 4);
 		entropyMapList.add(findEntropyImageForImageSubsection(image, (image.cols() / 2), (image.rows() / 2)));
 		entropyMapList.add(findEntropyImageForImageSubsection(image, height, width));
-		entropyMapList.add(findEntropyImageForImageSubsection(depthImage, (image.cols() / 2), (image.rows() / 2)));
-		entropyMapList.add(findEntropyImageForImageSubsection(depthImage, height, width));
+		entropyMapList.add(findEntropyImageForImageSubsection(normalisedDepthImage, (image.cols() / 2), (image.rows() / 2)));
+		entropyMapList.add(findEntropyImageForImageSubsection(normalisedDepthImage, height, width));
 		
 		// Find the saliency map of the image
 		Mat saliencyMap = findSaliencyMap(image);

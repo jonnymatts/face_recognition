@@ -36,10 +36,10 @@ public class Application {
 //		
 //		System.out.println(rh.findFeatureVector(img, depthImg));
 		
-		List<Person> pList = readDataset("/resources/datasets/test_dataset.txt");
+		PersonDataset set = readDataset("/resources/datasets/test_dataset.txt");
 		
-		Person p = pList.get(0);
-		displayImage(p.colourImage);
-		displayImage(p.depthImage);
+		set = performRISEFeatureExtractionOnDataset(set, 25);
+		
+		writeResultSetToFileForKNNClassifier(set);
 	}
 }

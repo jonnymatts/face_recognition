@@ -1,6 +1,7 @@
 package jonnymatts.facerecognition;
 
 import static java.lang.Math.*;
+import static jonnymatts.facerecognition.ApplicationUtil.*;
 
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -353,14 +354,12 @@ public class ImageHelper {
 	}
 
 	public static Mat readImageFromFile(String filename) {
-		String dir = System.getProperty("user.dir");
-		Mat img = Highgui.imread(dir + filename);
+		Mat img = Highgui.imread(userDir + filename);
 		return img;
 	}
 	
 	public static File loadFile(String filename) {
-		String dir = System.getProperty("user.dir");
-		return new File(dir + filename);
+		return new File(userDir + filename);
 	}
 
 	// Applies the supplied feature detector to the suppplied image

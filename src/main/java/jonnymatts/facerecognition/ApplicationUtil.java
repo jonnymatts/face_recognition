@@ -1,7 +1,6 @@
 package jonnymatts.facerecognition;
 
 import static java.lang.Integer.*;
-import static jonnymatts.facerecognition.ApplicationUtil.writeResultSetToFileForKNNClassifier;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,7 +66,35 @@ public class ApplicationUtil {
 				case ETHNICITY: personBiometric = p.ethnicity.toString(); break;
 				default: personBiometric = p.gender.toString(); break;
 			}
-			String personString = personBiometric + "," + p.getFeatureVector().toString().replaceAll("\\[|\\]", "");
+			String personString = personBiometric + ", " + p.getFeatureVector().toString().replaceAll("\\[|\\]", "");
+			bw.write(personString);
+			bw.newLine();
+		}
+		bw.close();
+	}
+	
+	public static void writeResultSetToFileForSVMClassifier(PersonDataset ds, String extractionMethod, Biometric biometric) throws IOException {
+		String biometricString;
+		switch (biometric) {
+			case AGE: biometricString = "_age_"; break;
+			case ETHNICITY: biometricString = "_ethnicity_"; break;
+			default: biometricString = "_gender_"; break;
+		}
+		String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
+		String fileName = ds.getName() + biometricString + extractionMethod + "_" + timeStamp + ".data";
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir + "/resources/classifier_inputs/svm/" + fileName)));
+		for (Person p : ds.getPersonList()) {
+			int personBiometric;
+			switch (biometric) {
+				case AGE: personBiometric = p.age.getValue(); break;
+				case ETHNICITY: personBiometric = p.ethnicity.getValue(); break;
+				default: personBiometric = p.gender.getValue(); break;
+			}
+			String personString = personBiometric + " ";
+			List<Double> fv = p.getFeatureVector();
+			for(int i = 0; i < fv.size(); i++) {
+				personString = personString + (i+1) + ":" + fv.get(i) + " ";
+			}
 			bw.write(personString);
 			bw.newLine();
 		}

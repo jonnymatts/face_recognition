@@ -22,6 +22,10 @@ public class PersonDataset {
 		return personList;
 	}
 	
+	public int size() {
+		return personList.size();
+	}
+	
 	PersonDataset(String n, List<Person> pl) {
 		name = n;
 		personList = pl;

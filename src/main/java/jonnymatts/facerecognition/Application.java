@@ -29,17 +29,8 @@ public class Application {
 		// Load .dylib file for openCV
 		System.load("/usr/local/Cellar/opencv/2.4.10.1/share/OpenCV/java/libopencv_java2410.dylib");
 		
-//		Mat img = readImageFromFile("/resources/face_testing_images/1.bmp");
-//		Mat depthImg = normaliseDepthImage(readImageFromFile("/resources/face_testing_images/1_depth.bmp"));
-//		
-//		RISEHandler rh = new RISEHandler(3, 15, 1, (img.rows() / 10), 0.02, 15, 230, 30, 25);
-//		
-//		System.out.println(rh.findFeatureVector(img, depthImg));
-		
-		PersonDataset set = readDataset("/resources/datasets/test_dataset.txt");
-		
-		set = performRISEFeatureExtractionOnDataset(set, 25);
-		
-		writeResultSetToFileForKNNClassifier(set);
+		KNNHandler knn = new KNNHandler("/resources/classifier_inputs/knn/test_dataset_training_RISE_2015_04_10_14_41_09.data", 1);
+		List<Boolean> boolList = knn.predictClassOfTestData("/resources/classifier_inputs/knn/test_dataset_testing2_RISE_2015_04_10_15_01_13.data");
+		System.out.println(boolList);
 	}
 }

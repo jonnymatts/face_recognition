@@ -43,9 +43,9 @@ public class ApplicationUtil {
 		return ds;
 	}
 	
-	public static void writeResultSetToFileForKNNClassifier(PersonDataset ds) throws IOException {
+	public static void writeResultSetToFileForKNNClassifier(PersonDataset ds, String extractionMethod) throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
-		String fileName = ds.getName() + "_" + timeStamp + ".data";
+		String fileName = ds.getName() + "_" + extractionMethod + "_" + timeStamp + ".data";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir + "/resources/classifier_inputs/knn/" + fileName)));
 		for(Person p : ds.getPersonList()) {
 			String personString = p.gender.toString() + "," + p.getFeatureVector().toString().replaceAll("\\[|\\]", "");

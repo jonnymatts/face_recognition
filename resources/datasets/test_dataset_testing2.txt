@@ -1,0 +1,3 @@
+test_dataset_testing2
+0,2,0,/resources/face_testing_images/21.bmp,/resources/face_testing_images/21_depth.bmp
+0,2,0,/resources/face_testing_images/22.bmp,/resources/face_testing_images/22_depth.bmp

@@ -1,6 +1,7 @@
 package jonnymatts.facerecognition;
 
 import static java.lang.Integer.*;
+import static jonnymatts.facerecognition.ApplicationUtil.writeResultSetToFileForKNNClassifier;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,12 +44,30 @@ public class ApplicationUtil {
 		return ds;
 	}
 	
-	public static void writeResultSetToFileForKNNClassifier(PersonDataset ds, String extractionMethod) throws IOException {
+	public static void writeResultSetToFilesForKNNClassifier(PersonDataset ds, String extractionMethod) throws IOException {
+		writeResultSetToFileForKNNClassifier(ds, extractionMethod, Biometric.GENDER);
+		writeResultSetToFileForKNNClassifier(ds, extractionMethod, Biometric.AGE);
+		writeResultSetToFileForKNNClassifier(ds, extractionMethod, Biometric.ETHNICITY);
+	}
+	
+	public static void writeResultSetToFileForKNNClassifier(PersonDataset ds, String extractionMethod, Biometric biometric) throws IOException {
+		String biometricString;
+		switch (biometric) {
+			case AGE: biometricString = "_age_"; break;
+			case ETHNICITY: biometricString = "_ethnicity_"; break;
+			default: biometricString = "_gender_"; break;
+		}
 		String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
-		String fileName = ds.getName() + "_" + extractionMethod + "_" + timeStamp + ".data";
+		String fileName = ds.getName() + biometricString + extractionMethod + "_" + timeStamp + ".data";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir + "/resources/classifier_inputs/knn/" + fileName)));
-		for(Person p : ds.getPersonList()) {
-			String personString = p.gender.toString() + "," + p.getFeatureVector().toString().replaceAll("\\[|\\]", "");
+		for (Person p : ds.getPersonList()) {
+			String personBiometric;
+			switch (biometric) {
+				case AGE: personBiometric = p.age.toString(); break;
+				case ETHNICITY: personBiometric = p.ethnicity.toString(); break;
+				default: personBiometric = p.gender.toString(); break;
+			}
+			String personString = personBiometric + "," + p.getFeatureVector().toString().replaceAll("\\[|\\]", "");
 			bw.write(personString);
 			bw.newLine();
 		}

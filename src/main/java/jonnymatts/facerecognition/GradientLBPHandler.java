@@ -62,7 +62,11 @@ public class GradientLBPHandler {
 			}
 		}
 		for(int i = -8; i < 8; i++) {
-			imageHistogram.add((double)differenceMap.get(i));
+			if(differenceMap.containsKey(i)) {
+				imageHistogram.add((double)differenceMap.get(i));
+			} else {
+				imageHistogram.add(0d);
+			}
 		}
 		return imageHistogram;
 	}

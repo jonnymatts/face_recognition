@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.io.IOException;
 
-import org.opencv.core.Mat;
-
 import com.google.common.primitives.Doubles;
 
 import libsvm.svm;
@@ -23,11 +21,27 @@ public class Application {
 		// Load .dylib file for openCV
 		System.load("/usr/local/Cellar/opencv/2.4.10.1/share/OpenCV/java/libopencv_java2410.dylib");
 		
-		GradientLBPHandler gh = new GradientLBPHandler(8, 1);
+//		PersonDataset set = readDataset("/resources/datasets/test_dataset_training.txt");
+//		set = performRISEFeatureExtractionOnDataset(set, 25);
+//		writeResultSetToFilesForKNNClassifier(set, "RISE");
+//		
+//		set = readDataset("/resources/datasets/test_dataset_testing.txt");
+//		set = performRISEFeatureExtractionOnDataset(set, 25);
+//		writeResultSetToFilesForKNNClassifier(set, "RISE");
+//		
+		PersonDataset set = readDataset("/resources/datasets/test_dataset_testing.txt");
+		PersonDataset trainingSet = performGLBPFeatureExtractionOnDataset(set, 8, 1);
+		set = readDataset("/resources/datasets/test_dataset_testing2.txt");
+		PersonDataset testingSet = performGLBPFeatureExtractionOnDataset(set, 8, 1);
 		
-		Mat image = readImageFromFile("/resources/face_testing_images/2.bmp");
-		Mat depthImage = readImageFromFile("/resources/face_testing_images/2_depth.bmp");
+//		writeResultSetToFileForSVMClassifier(set, "RISE", Biometric.GENDER);
 		
-		System.out.println(gh.findFeatureVector(image, depthImage));
+//		KNNHandler knn = new KNNHandler("/resources/classifier_inputs/knn/test_dataset_training_age_RISE_2015_04_10_15_49_40.data", 1);
+//		List<Boolean> boolList = knn.predictClassOfTestData("/resources/classifier_inputs/knn/test_dataset_testing2_age_RISE_2015_04_10_15_49_59.data");
+//		System.out.println(boolList);
+		
+		SVMHandler svmh = new SVMHandler();
+		svmh.trainSVMForBiometric(trainingSet, Biometric.ETHNICITY);
+		System.out.println(svmh.predictClasses(testingSet, Biometric.ETHNICITY));
 	}
 }

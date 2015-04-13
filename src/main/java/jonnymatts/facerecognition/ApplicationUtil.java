@@ -30,6 +30,18 @@ public class ApplicationUtil {
 		}
 		return result;
 	}
+	
+	public static PersonDataset performGLBPFeatureExtractionOnDataset(PersonDataset ds, int population, int radius) {
+		List<Person> personList = ds.getPersonList();
+		GradientLBPHandler glbph = new GradientLBPHandler(population, radius);
+		for(Person p : personList) {
+			List<List<Double>> featureVector = glbph.findFeatureVector(p.colourImage, p.depthImage);
+			List<Double> fv = flattenList(featureVector);
+			p.setFeatureVector(fv);
+		}
+		ds.setPersonList(personList);
+		return ds;
+	}
 
 	public static PersonDataset performRISEFeatureExtractionOnDataset(PersonDataset ds, double pixelsPerHOGCell) {
 		List<Person> personList = ds.getPersonList();

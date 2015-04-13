@@ -30,8 +30,6 @@ public class EigenfaceHandler {
 	}
 	
 	List<List<Double>> calculateWeightsForGivenImage(Mat img) {
-		List<List<Double>> returnList = new ArrayList<List<Double>>();
-		
 		List<Mat> blueEigenfaceList = eigenfaceList.get(0);
 		List<Mat> greenEigenfaceList = eigenfaceList.get(1);
 		List<Mat> redEigenfaceList = eigenfaceList.get(2);

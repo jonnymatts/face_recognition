@@ -1,6 +1,7 @@
 package jonnymatts.facerecognition;
 
 import static java.lang.Integer.*;
+import static jonnymatts.facerecognition.ImageHelper.preprocessImages;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.opencv.core.Mat;
 
 import com.google.common.collect.Lists;
 
@@ -29,6 +32,19 @@ public class ApplicationUtil {
 			result.addAll(inList.get(i));
 		}
 		return result;
+	}
+	
+	public static List<Person> performPreprocessing(PersonDataset set, int dimension) {
+		List<Person> pList = set.getPersonList();
+		for(Person p : pList) {
+			List<Mat> processedImages = preprocessImages(p.colourImage, p.depthImage, 256);
+			if(!processedImages.isEmpty()) {
+				p.setIsPreprocessed(true);
+				p.colourImage = processedImages.get(0);
+				p.depthImage = processedImages.get(1);
+			}
+		}
+		return pList;
 	}
 	
 	public static PersonDataset performGLBPFeatureExtractionOnDataset(PersonDataset ds, int population, int radius) {

@@ -1,6 +1,11 @@
 package jonnymatts.facerecognition;
 
+import static jonnymatts.facerecognition.ImageHelper.preprocessImages;
+
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.opencv.core.Mat;
 
 public class PersonDataset {
 	private String name;
@@ -29,5 +34,9 @@ public class PersonDataset {
 	PersonDataset(String n, List<Person> pl) {
 		name = n;
 		personList = pl;
+	}
+	
+	List<String> getListOfUnProcessedPeople() {
+		return personList.stream().filter(p -> p.getIsPreprocessed()).map(p -> p.name).collect(Collectors.toList());
 	}
 }

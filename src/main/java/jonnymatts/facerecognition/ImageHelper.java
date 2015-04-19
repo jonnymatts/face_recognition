@@ -33,6 +33,67 @@ public class ImageHelper {
 	
 	public static List<LBPColour> lbpColourList = Arrays.asList(LBPColour.RED, LBPColour.GREEN, LBPColour.BLUE);
 	
+	public static List<Mat> preprocessImages(Mat colourImage, Mat depthImage, int finalImageDimension) {
+		
+		try {
+			// Initialize classifiers for eyes and nose
+			CascadeClassifier eyeCas = new CascadeClassifier(
+					"/Users/jonnymatts/dev/opencv-2.4.10/data/haarcascades/haarcascade_eye.xml");
+			CascadeClassifier noseCas = new CascadeClassifier(
+					"/Users/jonnymatts/dev/opencv-2.4.10/data/haarcascades/haarcascade_mcs_nose.xml");
+
+			// Extract the points for the eyes
+			Mat grey = new Mat();
+			MatOfRect rectMat = new MatOfRect();
+			Imgproc.cvtColor(colourImage, grey, Imgproc.COLOR_BGR2GRAY);
+			eyeCas.detectMultiScale(grey, rectMat);
+			List<Point> eyeList = new ArrayList<Point>();
+			for (Rect rect : rectMat.toList()) {
+				Point centreOfRect = new Point((rect.x + (rect.width / 2)),
+						(rect.y + (rect.height / 2)));
+				eyeList.add(centreOfRect);
+			}
+
+			// Extract the point for the nose
+			noseCas.detectMultiScale(colourImage, rectMat);
+			if(rectMat.toList().isEmpty()) throw new CouldNotFindNoseException();
+			Rect noseRect = rectMat.toList().get(0);
+			Point nosePoint = new Point((noseRect.x + (noseRect.width / 2)),
+					(noseRect.y + (noseRect.height / 2)));
+
+			// Calculate distance between the two eyes
+			if (eyeList.size() != 2) throw new CouldNotFindEyesException();
+			Point eye1 = eyeList.get(0);
+			Point eye2 = eyeList.get(1);
+			int eyeDistance = (int) sqrt(pow((eye1.x - eye2.x), 2)
+					+ pow((eye1.y - eye2.y), 2));
+
+			// Create a sub-image, centred on the nose, with a height and width
+			// of twice the eye distance
+			int newDimension = eyeDistance * 2;
+			Mat colourSubImage = colourImage.submat(new Rect(
+					(int) (nosePoint.x - eyeDistance),
+					(int) (nosePoint.y - eyeDistance), newDimension,
+					newDimension));
+			Mat depthSubImage = depthImage.submat(new Rect(
+					(int) (nosePoint.x - eyeDistance),
+					(int) (nosePoint.y - eyeDistance), newDimension,
+					newDimension));
+
+			// Resize these new images to 256x256 pixels
+			Mat newColourImage = new Mat();
+			Imgproc.resize(colourSubImage, newColourImage, new Size(
+					finalImageDimension, finalImageDimension));
+			Mat newDepthImage = new Mat();
+			Imgproc.resize(depthSubImage, newDepthImage, new Size(
+					finalImageDimension, finalImageDimension));
+
+			return Arrays.asList(newColourImage, newDepthImage);
+		} catch (Exception e) {
+			return new ArrayList<Mat>();
+		}
+	}
+	
 	public static double featureMapSum(List<Mat> mapList, int i, int j) {
 		double sum = 0;
 		for(int k = 0; k < mapList.size(); k++) {

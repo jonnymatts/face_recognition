@@ -34,6 +34,14 @@ public class ApplicationUtil {
 		return result;
 	}
 	
+	public static double findPercentageCorrect(List<Boolean> boolList) {
+		double trueCount = 0d;
+		for(Boolean b : boolList) {
+			if(b == true) trueCount++;
+		}
+		return (trueCount / boolList.size()); 
+	}
+	
 	public static List<Person> performPreprocessing(PersonDataset set, int dimension) {
 		List<Person> pList = set.getPersonList();
 		for(Person p : pList) {

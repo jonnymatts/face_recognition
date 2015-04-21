@@ -35,20 +35,29 @@ public class Application {
 		System.load("/usr/local/Cellar/opencv/2.4.10.1/share/OpenCV/java/libopencv_java2410.dylib");
 		
 		
-		PersonDataset set = readDataset("/resources/datasets/EURECOM_neutral_dataset_sitting1.txt");
+//		PersonDataset set = readDataset("/resources/datasets/EURECOM_neutral_dataset_sitting1.txt");
+//		set.setPersonList(performPreprocessing(set, 256));
+//		PersonDataset trainingSet = performGLBPFeatureExtractionOnDataset(set, 8, 1);
+//		set = readDataset("/resources/datasets/EURECOM_neutral_dataset_sitting2.txt");
+//		set.setPersonList(performPreprocessing(set, 256));
+//		PersonDataset testingSet = performGLBPFeatureExtractionOnDataset(set, 8, 1);
+		
+		PersonDataset set = readDataset("/resources/datasets/test_dataset_training.txt");
 		set.setPersonList(performPreprocessing(set, 256));
-		PersonDataset trainingSet = performGLBPFeatureExtractionOnDataset(set, 8, 1);
-		set = readDataset("/resources/datasets/EURECOM_neutral_dataset_sitting2.txt");
-		set.setPersonList(performPreprocessing(set, 256));
-		PersonDataset testingSet = performGLBPFeatureExtractionOnDataset(set, 8, 1);
+		EigenfaceHandler efh = new EigenfaceHandler(set.getColourImageList(), set.getDepthImageList());
+		
+		Person p = set.getPersonList().get(0);
+		List<List<Double>> fv = efh.findFeatureVector(p.colourImage, p.depthImage);
+		System.out.println(fv);
+		
 		
 //		KNNHandler knn = new KNNHandler("/resources/classifier_inputs/knn/test_dataset_training_age_RISE_2015_04_10_15_49_40.data", 1);
 //		List<Boolean> boolList = knn.predictClassOfTestData("/resources/classifier_inputs/knn/test_dataset_testing2_age_RISE_2015_04_10_15_49_59.data");
 //		System.out.println(boolList);
 		
-		SVMHandler svmh = new SVMHandler();
-		svmh.trainSVMForBiometric(trainingSet, Biometric.GENDER);
-		List<Boolean> boolList = svmh.predictClasses(testingSet, Biometric.GENDER);
-		System.out.println(findPercentageCorrect(boolList));
+//		SVMHandler svmh = new SVMHandler();
+//		svmh.trainSVMForBiometric(trainingSet, Biometric.GENDER);
+//		List<Boolean> boolList = svmh.predictClasses(testingSet, Biometric.GENDER);
+//		System.out.println(findPercentageCorrect(boolList));
 	}
 }

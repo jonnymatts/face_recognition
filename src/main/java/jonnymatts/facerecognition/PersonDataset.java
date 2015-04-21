@@ -3,6 +3,8 @@ package jonnymatts.facerecognition;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.opencv.core.Mat;
+
 public class PersonDataset {
 	private String name;
 	private List<Person> personList;
@@ -30,6 +32,14 @@ public class PersonDataset {
 	PersonDataset(String n, List<Person> pl) {
 		name = n;
 		personList = pl;
+	}
+	
+	List<Mat> getDepthImageList() {
+		return personList.stream().map(i -> i.depthImage).collect(Collectors.toList());
+	}
+	
+	List<Mat> getColourImageList() {
+		return personList.stream().map(i -> i.colourImage).collect(Collectors.toList());
 	}
 	
 	List<String> getListOfUnProcessedPeople() {

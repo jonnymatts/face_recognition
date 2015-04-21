@@ -2,4 +2,7 @@ bin
 .metadata
 /target/
 .DS_Store
-*/.DS_Store
+**/.DS_Store
+/resources/face_testing_images/EURECOM\ Kinect\ Face\ Dataset
+/resources/face_testing_images/IIIT-D\ Kinect\ RGB-D\ Face\ Database
+/resources/.DS_Store

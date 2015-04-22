@@ -1,13 +1,12 @@
 package jonnymatts.facerecognition;
 
-import static libsvm.svm.*;
+import static libsvm.svm.svm_predict;
+import static libsvm.svm.svm_train;
 
 import java.util.ArrayList;
 import java.util.List;
-import libsvm.svm_model;
-import libsvm.svm_node;
-import libsvm.svm_parameter;
-import libsvm.svm_problem;
+
+import libsvm.*;
 
 public class SVMHandler {
 	

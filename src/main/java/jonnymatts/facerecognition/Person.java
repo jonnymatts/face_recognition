@@ -1,6 +1,6 @@
 package jonnymatts.facerecognition;
 
-import static jonnymatts.facerecognition.ImageHelper.*;
+import static jonnymatts.facerecognition.ImageHelper.readImageFromFile;
 
 import java.util.ArrayList;
 import java.util.List;

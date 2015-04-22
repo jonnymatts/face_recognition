@@ -1,7 +1,9 @@
 package jonnymatts.facerecognition;
 
-import static java.lang.Math.*;
-import static jonnymatts.facerecognition.ApplicationUtil.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static jonnymatts.facerecognition.ApplicationUtil.userDir;
 
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -17,14 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;

@@ -1,9 +1,12 @@
 package jonnymatts.facerecognition;
 
-import static org.junit.Assert.*;
 import static java.lang.Math.ceil;
 import static java.lang.Math.floor;
-import static jonnymatts.facerecognition.ImageHelper.*;
+import static jonnymatts.facerecognition.ImageHelper.bilinearInterpolation;
+import static jonnymatts.facerecognition.ImageHelper.readImageFromFile;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;

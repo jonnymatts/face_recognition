@@ -1,12 +1,13 @@
 package jonnymatts.facerecognition;
 
-import static jonnymatts.facerecognition.ImageHelper.*;
 import static java.lang.Math.*;
+import static jonnymatts.facerecognition.ImageHelper.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;

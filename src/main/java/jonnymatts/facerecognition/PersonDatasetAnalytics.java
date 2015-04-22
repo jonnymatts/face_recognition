@@ -1,12 +1,8 @@
 package jonnymatts.facerecognition;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PersonDatasetAnalytics {
@@ -117,6 +113,11 @@ public class PersonDatasetAnalytics {
 			}
 		}
 	}
+	
+	void addPeopleToPersonList(PersonDataset ds) {
+		addPeopleToPersonList(ds.getPersonList());
+	}
+	
 
 	void addPeopleToPersonList(List<Person> pl) {
 		List<Person> currentPersonList = set.getPersonList();

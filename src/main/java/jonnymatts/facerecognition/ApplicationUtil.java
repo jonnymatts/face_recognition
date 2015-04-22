@@ -1,12 +1,9 @@
 package jonnymatts.facerecognition;
 
-import static java.lang.Integer.*;
+import static java.lang.Integer.parseInt;
 import static jonnymatts.facerecognition.ImageHelper.preprocessImages;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;

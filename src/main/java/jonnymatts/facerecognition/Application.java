@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.io.IOException;
 
+import net.sf.javaml.core.Dataset;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -53,8 +55,13 @@ public class Application {
 		PersonDataset trainingSet = datasets.get(0);
 		PersonDataset testingSet = datasets.get(1);
 		
-//		trainingSet = performGLBPFeatureExtractionOnDataset(trainingSet, 8, 1);
-//		testingSet = performGLBPFeatureExtractionOnDataset(testingSet, 8, 1);
+		trainingSet = performGLBPFeatureExtractionOnDataset(trainingSet, 8, 1);
+		testingSet = performGLBPFeatureExtractionOnDataset(testingSet, 8, 1);
+		
+		KNNHandler knn = new KNNHandler();
+		knn.trainForBiometric(trainingSet, Biometric.GENDER, 3);
+		testingSet = knn.predictClassesForBiometric(testingSet, Biometric.GENDER);
+		System.out.println(findPercentageCorrect(testingSet.checkPredictedClassesForBiometric(Biometric.GENDER)));
 		
 		
 //		KNNHandler knn = new KNNHandler("/resources/classifier_inputs/knn/test_dataset_training_age_RISE_2015_04_10_15_49_40.data", 1);
@@ -63,7 +70,7 @@ public class Application {
 		
 //		SVMHandler svmh = new SVMHandler();
 //		svmh.trainSVMForBiometric(trainingSet, Biometric.AGE);
-//		List<Boolean> boolList = svmh.predictClasses(testingSet, Biometric.AGE);
-//		System.out.println(findPercentageCorrect(boolList));
+//		testingSet = svmh.predictClasses(testingSet, Biometric.AGE);
+//		System.out.println(findPercentageCorrect(testingSet.checkPredictedClassesForBiometric(Biometric.AGE)));
 	}
 }

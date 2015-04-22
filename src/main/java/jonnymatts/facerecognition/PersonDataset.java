@@ -3,6 +3,10 @@ package jonnymatts.facerecognition;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.sf.javaml.core.Dataset;
+import net.sf.javaml.core.DefaultDataset;
+import net.sf.javaml.core.Instance;
+
 import org.opencv.core.Mat;
 
 public class PersonDataset {
@@ -32,6 +36,26 @@ public class PersonDataset {
 	PersonDataset(String n, List<Person> pl) {
 		name = n;
 		personList = pl;
+	}
+	
+	List<Boolean> checkPredictedClassesForBiometric(Biometric biometric) {
+		switch(biometric) {
+			case AGE:
+				return personList.stream().map(p -> p.age == p.predictedAge).collect(Collectors.toList());
+			case ETHNICITY:
+				return personList.stream().map(p -> p.ethnicity == p.predictedEthnicity).collect(Collectors.toList());
+			default:
+				return personList.stream().map(p -> p.gender == p.predictedGender).collect(Collectors.toList());
+		}
+	}
+	
+	Dataset createKNNDatasetForBiometric(Biometric biometric) {
+		Dataset data = new DefaultDataset();
+		List<Instance> instanceList = personList.stream().map(p -> p.createKNNInstanceForBiometric(biometric)).collect(Collectors.toList());
+		for(Instance i : instanceList) {
+			data.add(i);
+		}
+		return data;
 	}
 	
 	List<Mat> getDepthImageList() {

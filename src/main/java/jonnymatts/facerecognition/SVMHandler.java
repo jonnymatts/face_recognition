@@ -13,21 +13,21 @@ public class SVMHandler {
 	
 	private svm_model model;
 	
-	public List<Boolean> predictClasses(PersonDataset testingSet, Biometric biometric) {
-		List<Boolean> boolList = new ArrayList<Boolean>();
+	public PersonDataset predictClassesForBiometric(PersonDataset testingSet, Biometric biometric) {
 		List<Person> pList = testingSet.getPersonList();
 		for(Person p : pList) {
-			double predictedClass = svm_predict(model, getSVMNodeArray(p.getFeatureVector()));
+			int predictedClass = (int)svm_predict(model, getSVMNodeArray(p.getFeatureVector()));
 			switch(biometric) {
-				case AGE: boolList.add(p.age.getValue() == (int)predictedClass); break;
-				case ETHNICITY: boolList.add(p.ethnicity.getValue() == (int)predictedClass); break;
-				default: boolList.add(p.gender.getValue() == (int)predictedClass); break;
+				case AGE: p.predictedAge = PersonAge.valueOf(predictedClass); break;
+				case ETHNICITY: p.predictedEthnicity = PersonEthnicity.valueOf(predictedClass); break;
+				default: p.predictedGender = PersonGender.valueOf(predictedClass); break;
 			}
 		}
-		return boolList;
+		testingSet.setPersonList(pList);
+		return testingSet;
 	}
 	
-	public void trainSVMForBiometric(PersonDataset trainingSet, Biometric biometric) {
+	public void trainForBiometric(PersonDataset trainingSet, Biometric biometric) {
 		model = svm_train(getSVMProblem(trainingSet, biometric), getSVMParameter());
 	}
 	

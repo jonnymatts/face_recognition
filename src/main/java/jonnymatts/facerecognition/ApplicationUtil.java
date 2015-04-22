@@ -22,6 +22,10 @@ import com.google.common.collect.Lists;
 public class ApplicationUtil {
 
 	public static final String userDir = System.getProperty("user.dir");
+	
+	public static String getTimestamp() {
+		return new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
+	}
 
 	// A function that flattens a list of lists of integers, into a single list
 	// of integers
@@ -143,10 +147,8 @@ public class ApplicationUtil {
 			biometricString = "_gender_";
 			break;
 		}
-		String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
-				.format(new Date());
 		String fileName = ds.getName() + biometricString + extractionMethod
-				+ "_" + timeStamp + ".data";
+				+ "_" + getTimestamp() + ".data";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir
 				+ "/resources/classifier_inputs/knn/" + fileName)));
 		for (Person p : ds.getPersonList()) {
@@ -184,10 +186,8 @@ public class ApplicationUtil {
 			biometricString = "_gender_";
 			break;
 		}
-		String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
-				.format(new Date());
 		String fileName = ds.getName() + biometricString + extractionMethod
-				+ "_" + timeStamp + ".data";
+				+ "_" + getTimestamp() + ".data";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir
 				+ "/resources/classifier_inputs/svm/" + fileName)));
 		for (Person p : ds.getPersonList()) {
@@ -208,6 +208,20 @@ public class ApplicationUtil {
 			for (int i = 0; i < fv.size(); i++) {
 				personString = personString + (i + 1) + ":" + fv.get(i) + " ";
 			}
+			bw.write(personString);
+			bw.newLine();
+		}
+		bw.close();
+	}
+	
+	public static void saveDataset(PersonDataset ds) throws IOException {
+		String fileName = ds.getName() + "_" + getTimestamp();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir + "/resources/datasets/" + fileName + ".txt")));
+		bw.write(fileName);
+		bw.newLine();
+		for (Person p : ds.getPersonList()) {
+			String personString = p.gender.getValue() + "," + p.age.getValue() + "," + p.ethnicity.getValue() + "," + 
+					p.colourImagePath + "," + p.depthImagePath; 
 			bw.write(personString);
 			bw.newLine();
 		}

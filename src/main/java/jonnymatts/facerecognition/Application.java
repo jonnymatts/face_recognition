@@ -49,21 +49,21 @@ public class Application {
 		
 		PersonDatasetAnalytics pda = new PersonDatasetAnalytics(set1);
 		pda.addPeopleToPersonList(set2.getPersonList());
-		List<PersonDataset> datasets = pda.getOptimizedDatasets("EURECOM", 200);
+		List<PersonDataset> datasets = pda.getOptimizedDatasets("EURECOM", 100);
 		PersonDataset trainingSet = datasets.get(0);
 		PersonDataset testingSet = datasets.get(1);
 		
-		trainingSet = performGLBPFeatureExtractionOnDataset(trainingSet, 8, 1);
-		testingSet = performGLBPFeatureExtractionOnDataset(testingSet, 8, 1);
+//		trainingSet = performGLBPFeatureExtractionOnDataset(trainingSet, 8, 1);
+//		testingSet = performGLBPFeatureExtractionOnDataset(testingSet, 8, 1);
 		
 		
 //		KNNHandler knn = new KNNHandler("/resources/classifier_inputs/knn/test_dataset_training_age_RISE_2015_04_10_15_49_40.data", 1);
 //		List<Boolean> boolList = knn.predictClassOfTestData("/resources/classifier_inputs/knn/test_dataset_testing2_age_RISE_2015_04_10_15_49_59.data");
 //		System.out.println(boolList);
 		
-		SVMHandler svmh = new SVMHandler();
-		svmh.trainSVMForBiometric(trainingSet, Biometric.AGE);
-		List<Boolean> boolList = svmh.predictClasses(testingSet, Biometric.AGE);
-		System.out.println(findPercentageCorrect(boolList));
+//		SVMHandler svmh = new SVMHandler();
+//		svmh.trainSVMForBiometric(trainingSet, Biometric.AGE);
+//		List<Boolean> boolList = svmh.predictClasses(testingSet, Biometric.AGE);
+//		System.out.println(findPercentageCorrect(boolList));
 	}
 }

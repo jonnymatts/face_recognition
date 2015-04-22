@@ -12,6 +12,8 @@ public class Person {
 	public PersonGender gender;
 	public PersonAge age;
 	public PersonEthnicity ethnicity;
+	public String colourImagePath;
+	public String depthImagePath;
 	public Mat colourImage;
 	public Mat depthImage;
 	private boolean isPreprocessed;
@@ -33,11 +35,13 @@ public class Person {
 		return featureVector;
 	}
 	
-	Person(String n, int g, int a, int e, String colourImagePath, String depthImagePath) {
+	Person(String n, int g, int a, int e, String cPath, String dPath) {
 		name = n;
 		gender = PersonGender.valueOf(g);
 		age = PersonAge.valueOf(a);
 		ethnicity = PersonEthnicity.valueOf(e);
+		colourImagePath = cPath;
+		depthImagePath = dPath;
 		colourImage = readImageFromFile(colourImagePath);
 		depthImage = readImageFromFile(depthImagePath);
 		isPreprocessed = false;

@@ -33,8 +33,8 @@ public class Person {
 		return featureVector;
 	}
 	
-	Person(int g, int a, int e, String colourImagePath, String depthImagePath) {
-		name = colourImagePath;
+	Person(String n, int g, int a, int e, String colourImagePath, String depthImagePath) {
+		name = n;
 		gender = PersonGender.valueOf(g);
 		age = PersonAge.valueOf(a);
 		ethnicity = PersonEthnicity.valueOf(e);

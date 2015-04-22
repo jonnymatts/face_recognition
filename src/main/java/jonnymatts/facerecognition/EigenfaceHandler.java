@@ -45,8 +45,6 @@ public class EigenfaceHandler {
 		List<List<Double>> colourWeights = calculateWeightsForGivenColourImage(colourImage);
 		List<Double> depthWeights = calculateWeightsForGivenDepthImage(depthImage);
 		
-		System.out.println(depthWeights);
-		
 		for(List<Double> weights : colourWeights) {
 			featureVector.add(weights);
 		}

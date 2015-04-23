@@ -43,6 +43,16 @@ public class Person {
 		return featureVector;
 	}
 	
+	Person(String n, String g, String pg, String a, String pa, String e, String pe) {
+		name = n;
+		gender = PersonGender.valueOf(g);
+		predictedGender = PersonGender.valueOf(pg);
+		age = PersonAge.valueOf(a);
+		predictedAge = PersonAge.valueOf(pa);
+		ethnicity = PersonEthnicity.valueOf(e);
+		predictedEthnicity = PersonEthnicity.valueOf(pe);
+	}
+	
 	Person(String n, int g, int a, int e, String cPath, String dPath) {
 		name = n;
 		gender = PersonGender.valueOf(g);

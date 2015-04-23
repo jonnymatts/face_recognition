@@ -212,6 +212,21 @@ public class ApplicationUtil {
 		bw.close();
 	}
 	
+	public static PersonDataset readResultSet(String pathToResultSet)
+			throws IOException {
+		List<Person> personList = new ArrayList<Person>();
+		List<String> lines = Lists.newArrayList(Files.lines(
+				Paths.get(userDir + pathToResultSet)).iterator());
+		String name = lines.get(0);
+		lines.remove(0);
+		for(int i = 0; i < lines.size(); i++) {
+			String[] data = lines.get(i).split(",");
+			Person p = new Person(data[0], data[1], data[2], data[4], data[5], data[7], data[8]);
+			personList.add(p);
+		}
+		return new PersonDataset(name, personList);
+	}
+	
 	public static void saveDataset(PersonDataset ds) throws IOException {
 		String fileName = ds.getName();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir + "/resources/datasets/" + fileName + ".txt")));

@@ -10,8 +10,17 @@ import net.sf.javaml.core.Instance;
 public class KNNHandler {
 
 	private Classifier classifier;
+	private int numberOfNeighbours;
 	
-	public void trainForBiometric(PersonDataset trainingSet, Biometric biometric, int numberOfNeighbours) {
+	KNNHandler(int n) {
+		numberOfNeighbours = n;
+	}
+	
+	public String getClassifierName() {
+		return "_KNN_" + numberOfNeighbours;
+	}
+	
+	public void trainForBiometric(PersonDataset trainingSet, Biometric biometric) {
 		Dataset data = trainingSet.createKNNDatasetForBiometric(biometric);
 		classifier = new KNearestNeighbors(numberOfNeighbours);
 		classifier.buildClassifier(data);
@@ -21,7 +30,9 @@ public class KNNHandler {
 		List<Person> pList = testingSet.getPersonList();
 		for (Person p : pList) {
 			Instance inst = p.createKNNInstanceForBiometric(biometric);
-			int predictedClassValue = Integer.valueOf((int)classifier.classify(inst));
+			Object predictedClassObject = classifier.classify(inst);
+			boolean nullObject = predictedClassObject == (null);
+			int predictedClassValue = nullObject ? -1 : Integer.valueOf((int)predictedClassObject);
 			switch(biometric) {
 				case AGE: p.predictedAge = PersonAge.valueOf(predictedClassValue); break;
 				case ETHNICITY: p.predictedEthnicity = PersonEthnicity.valueOf(predictedClassValue); break;

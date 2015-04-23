@@ -1,0 +1,22 @@
+EURECOM_3_testing
+0,1,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0002/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0002/s2/depth/Neutral.bmp
+0,1,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0042/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0042/s2/depth/Neutral.bmp
+0,3,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0048/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0048/s1/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0017/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0017/s2/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0029/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0029/s2/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0047/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0047/s2/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0036/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0036/s1/depth/Neutral.bmp
+0,2,1,/resources/face_testing_images/EURECOM Kinect Face Dataset/0024/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0024/s1/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0009/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0009/s1/depth/Neutral.bmp
+0,1,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0002/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0002/s1/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0038/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0038/s1/depth/Neutral.bmp
+0,1,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0045/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0045/s1/depth/Neutral.bmp
+1,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0015/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0015/s1/depth/Neutral.bmp
+0,1,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0049/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0049/s2/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0009/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0009/s2/depth/Neutral.bmp
+0,1,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0037/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0037/s1/depth/Neutral.bmp
+0,2,1,/resources/face_testing_images/EURECOM Kinect Face Dataset/0007/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0007/s1/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0030/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0030/s1/depth/Neutral.bmp
+0,1,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0033/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0033/s2/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0040/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0040/s2/depth/Neutral.bmp
+0,2,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0022/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0022/s2/depth/Neutral.bmp

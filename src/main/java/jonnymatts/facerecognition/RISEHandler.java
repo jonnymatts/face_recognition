@@ -25,6 +25,10 @@ public class RISEHandler {
 	private double differenceCutoff;
 	private double pixelsPerHOGCell;
 	
+	public static String getExtractorName(int pixels) {
+		return "_RISE_" + pixels;
+	}
+	
 	public RISEHandler(int r, int ks, double s, double l, double g, int lns, double m, double lmc, double pphc) {
 		radius = r;
 		kSize = ks;

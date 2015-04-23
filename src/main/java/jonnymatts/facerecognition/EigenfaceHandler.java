@@ -21,6 +21,10 @@ public class EigenfaceHandler {
 	private List<Mat> depthTrainingImageList;
 	private List<List<Mat>> colourEigenfaceList;
 	private List<Mat> depthEigenfaceList;
+	
+	public static String getExtractorName() {
+		return "_EIG";
+	}
 
 	public EigenfaceHandler(List<Mat> cti, List<Mat> dti) {
 		colourTrainingImageList = cti;

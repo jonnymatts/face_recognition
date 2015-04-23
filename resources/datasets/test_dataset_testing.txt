@@ -1,2 +1,0 @@
-test_dataset_testing
-0,2,0,/resources/face_testing_images/21.bmp,/resources/face_testing_images/21_depth.bmp

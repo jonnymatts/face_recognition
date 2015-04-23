@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum PersonGender {
-	MALE(0), FEMALE(1);
+	MALE(0), FEMALE(1), UNKNOWN(-1);
 	
 	private int value;
 	

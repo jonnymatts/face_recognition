@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum PersonEthnicity {
-	NONINDIAN(0), INDIAN(1);
+	NONINDIAN(0), INDIAN(1), UNKNOWN(-1);
 
 	private int value;
 

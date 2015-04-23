@@ -10,6 +10,10 @@ import libsvm.*;
 
 public class SVMHandler {
 	
+	public String getClassifierName() {
+		return "_SVM_";
+	}
+	
 	private svm_model model;
 	
 	public PersonDataset predictClassesForBiometric(PersonDataset testingSet, Biometric biometric) {

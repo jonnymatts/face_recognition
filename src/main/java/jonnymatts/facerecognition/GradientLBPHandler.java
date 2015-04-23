@@ -20,6 +20,10 @@ public class GradientLBPHandler {
 		lbph = new LocalBinaryPatternHandler(8, 2, true, false, false);
 	}
 	
+	public static String getExtractorName(int population, int radius) {
+		return "_GLBP_" + population + "_" + radius;
+	}
+	
 	List<List<Double>> findFeatureVector(Mat colourImage, Mat depthImage) {
 		
 		// Find all the orientations needed for GLBP

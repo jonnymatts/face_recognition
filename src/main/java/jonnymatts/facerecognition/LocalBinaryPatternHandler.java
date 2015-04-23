@@ -22,6 +22,15 @@ public class LocalBinaryPatternHandler {
 	private int population;
 	private int radius;
 	private List<Double> histogramBinList;
+	
+	public static String getExtractorName(int population, int radius, int noOfSubImages, boolean useUniformPatterns, 
+			boolean useRotationInvariance, boolean useRGB) {
+		String returnString = "_LBP_" + population + "_" + radius + "_" + noOfSubImages;
+		if(useUniformPatterns) returnString += "_UP";
+		if(useRotationInvariance) returnString += "_RI";
+		if(useRGB) returnString += "_RGB";
+		return returnString;
+	}
 
 	public void setPopulation(int p) {
 		population = p;

@@ -17,7 +17,7 @@ public class GradientLBPHandler {
 	
 	GradientLBPHandler(int p, int r) {
 		population = p;
-		lbph = new LocalBinaryPatternHandler(8, 2, true, false, false);
+		lbph = new LocalBinaryPatternHandler(8, 1, true, false, false);
 	}
 	
 	public static String getExtractorName(int population, int radius) {

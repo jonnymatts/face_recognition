@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
@@ -69,6 +70,18 @@ public class LocalBinaryPatternHandler {
 		useRGB = rgb;
 		histogramBinList = createHistogramBinList();
 	}
+	
+	List<Integer> getUniformPatternList(List<List<Integer>> intLists, List<Integer> intList) {
+		List<Boolean> boolList = intLists.stream().map(b -> {
+			int noOfChanges = 0;
+			for (int i = 1; i < b.size(); i++) {
+				if (b.get(i) != b.get(i - 1))
+					noOfChanges++;
+			}
+			return noOfChanges;
+		}).map(s -> s < 3).collect(Collectors.toList());
+		return intList.stream().filter(i -> boolList.get(i)).collect(Collectors.toList());
+	}
 
 	private List<Double> createHistogramBinList() {
 		List<Integer> intList = IntStream.range(0, (int) pow(2, population)).boxed().collect(Collectors.toList());
@@ -76,25 +89,11 @@ public class LocalBinaryPatternHandler {
 		List<Double> returnList;
 		
 		if (useUniformPatterns && useRotationInvariance) {
-			returnList = new ArrayList<Double>();
-			returnList.add(0d);
-			List<Integer> valList = convertIntegerToBinaryList(0);
-			for(int i = 0; i < population-1; i++) {
-				shiftBinaryList(valList);
-				valList.set(valList.size()-1, 1);
-				returnList.add(convertBinaryListToInteger(valList).doubleValue());
-			}
+			List<Integer> uniformPatternList = getUniformPatternList(intLists, intList);
+			returnList = uniformPatternList.stream().map(b -> findRotationInvariantSequence(convertIntegerToBinaryList(b))).distinct().map(b -> convertBinaryListToInteger(b).doubleValue()).collect(Collectors.toList());
 			
 		} else if (useUniformPatterns) {
-			List<Boolean> boolList = intLists.stream().map(b -> {
-				int noOfChanges = 0;
-				for (int i = 1; i < b.size(); i++) {
-					if (b.get(i) != b.get(i - 1))
-						noOfChanges++;
-				}
-				return noOfChanges;
-			}).map(s -> s < 3).collect(Collectors.toList());
-			returnList = intList.stream().filter(i -> boolList.get(i)).map(i -> i.doubleValue()).collect(Collectors.toList());
+			returnList = getUniformPatternList(intLists, intList).stream().map(i -> i.doubleValue()).collect(Collectors.toList());
 			
 		} else if (useRotationInvariance) {
 			returnList = intLists.stream().map(b -> findRotationInvariantSequence(b)).distinct().map(b -> convertBinaryListToInteger(b).doubleValue()).collect(Collectors.toList());
@@ -234,17 +233,19 @@ public class LocalBinaryPatternHandler {
 
 			if(!useRGB) {
 				// Find the LBP value at each pixel
-				Mat lbpImg = calculateLBP(subImg, LBPColour.RED);
+				Mat lbpImg = calculateLBP(subImg, LBPColour.GREY);
 				
 				// Convert each sub-image into a histogram
 				List<Double> imgHist = convertImageToHistogram(lbpImg);
 				
 				histList.add(imgHist);
 			} else {
-				for(LBPColour lbpColour : lbpColourList) {
+				List<Mat> bgrList = new ArrayList<Mat>();
+				Core.split(subImg, bgrList);
+				for(Mat channelImage : bgrList) {
 					
 					// Find the LBP value at each pixel
-					Mat lbpImg = calculateLBP(subImg, lbpColour);
+					Mat lbpImg = calculateLBP(channelImage, LBPColour.BLUE);
 					
 					// Convert each sub-image into a histogram
 					List<Double> imgHist = convertImageToHistogram(lbpImg);

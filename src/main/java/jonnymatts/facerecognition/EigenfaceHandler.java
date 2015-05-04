@@ -17,6 +17,10 @@ public class EigenfaceHandler {
 	private Mat greenChannelMeanImage;
 	private Mat redChannelMeanImage;
 	private Mat depthMeanImage;
+	private Mat blueEigenfaceMat;
+	private Mat greenEigenfaceMat;
+	private Mat redEigenfaceMat;
+	private Mat depthEigenfaceMat;
 	private List<Mat> colourTrainingImageList;
 	private List<Mat> depthTrainingImageList;
 	private List<List<Mat>> colourEigenfaceList;
@@ -62,11 +66,6 @@ public class EigenfaceHandler {
 		Mat normalisedDepthImage = normaliseDepthImage(depthImage);
 		normalisedDepthImage.convertTo(normalisedDepthImage, CvType.CV_8UC1);
 
-		// Create depth eigenface matrix
-		int imageSize = (int) depthEigenfaceList.get(0).size().area();
-		Mat depthEigenfaceMat = convertImageListToSingleMatrix(
-				depthEigenfaceList, depthEigenfaceList.size(), imageSize);
-
 		// Subtract mean image
 		Mat meanSubtractedImage = subtractSingleChannelImages(normalisedDepthImage,
 				depthMeanImage);
@@ -82,18 +81,6 @@ public class EigenfaceHandler {
 	}
 
 	List<List<Double>> calculateWeightsForGivenColourImage(Mat img) {
-		List<Mat> blueEigenfaceList = colourEigenfaceList.get(0);
-		List<Mat> greenEigenfaceList = colourEigenfaceList.get(1);
-		List<Mat> redEigenfaceList = colourEigenfaceList.get(2);
-
-		// Create eigenface matrix for each colour channel
-		int imageSize = (int) blueEigenfaceList.get(0).size().area();
-		Mat blueEigenfaceMat = convertImageListToSingleMatrix(
-				blueEigenfaceList, blueEigenfaceList.size(), imageSize);
-		Mat greenEigenfaceMat = convertImageListToSingleMatrix(
-				greenEigenfaceList, blueEigenfaceList.size(), imageSize);
-		Mat redEigenfaceMat = convertImageListToSingleMatrix(redEigenfaceList,
-				blueEigenfaceList.size(), imageSize);
 
 		// Subtract mean image of each colour channel from image
 		Mat meanSubtractedImage = subtractImageFromMultiChannelImage(img,
@@ -209,8 +196,12 @@ public class EigenfaceHandler {
 			}
 			rowIndex++;
 		}
+		
+		List<Mat> depthEigenList = findEigenvectorsForMatrix(aMatrix);
+		int imageSize = (int) depthEigenList.get(0).size().area();
+		depthEigenfaceMat = convertImageListToSingleMatrix(depthEigenList, depthEigenList.size(), imageSize);
 
-		return findEigenvectorsForMatrix(aMatrix);
+		return depthEigenList;
 	}
 
 	List<List<Mat>> createEigenfaces() {
@@ -287,6 +278,15 @@ public class EigenfaceHandler {
 				findEigenvectorsForMatrix(bAMatrix),
 				findEigenvectorsForMatrix(gAMatrix),
 				findEigenvectorsForMatrix(rAMatrix));
+		
+		// Create eigenface matrix for each colour channel
+		int imageSize = (int) colourChannelEigenVectors.get(0).get(0).size().area();
+		blueEigenfaceMat = convertImageListToSingleMatrix(
+				colourChannelEigenVectors.get(0), colourChannelEigenVectors.get(0).size(), imageSize);
+		greenEigenfaceMat = convertImageListToSingleMatrix(
+				colourChannelEigenVectors.get(1), colourChannelEigenVectors.get(0).size(), imageSize);
+		redEigenfaceMat = convertImageListToSingleMatrix(colourChannelEigenVectors.get(2),
+				colourChannelEigenVectors.get(0).size(), imageSize);
 
 		return colourChannelEigenVectors;
 	}

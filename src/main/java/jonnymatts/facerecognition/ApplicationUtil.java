@@ -1,6 +1,7 @@
 package jonnymatts.facerecognition;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.Math.abs;
 import static jonnymatts.facerecognition.ImageHelper.preprocessImages;
 
 import java.io.*;
@@ -20,6 +21,14 @@ import com.google.common.collect.Lists;
 public class ApplicationUtil {
 
 	public static final String userDir = System.getProperty("user.dir");
+	
+	public static DatasetResult averageDatasetResultList(List<DatasetResult> inputList) {
+		 double genderSum = inputList.stream().map(dr -> dr.genderCorrect).reduce(0d, Double::sum);
+		 double ageSum = inputList.stream().map(dr -> dr.ageCorrect).reduce(0d, Double::sum);
+		 double ethnicitySum = inputList.stream().map(dr -> dr.ethnicityCorrect).reduce(0d, Double::sum);
+		 int listSize = inputList.size();
+		 return new DatasetResult((genderSum / listSize), (ageSum / listSize), (ethnicitySum / listSize));
+	}
 	
 	public static String createCommaSeperatedString(List<String> inputList) {
 		String returnString = "";
@@ -66,7 +75,7 @@ public class ApplicationUtil {
 	public static List<Person> performPreprocessing(PersonDataset set, int dimension) {
 		List<Person> pList = set.getPersonList();
 		for (Person p : pList) {
-			List<Mat> processedImages = preprocessImages(p.colourImage, p.depthImage, 256);
+			List<Mat> processedImages = preprocessImages(p.colourImage, p.depthImage, dimension);
 			if (!processedImages.isEmpty()) {
 				p.setIsPreprocessed(true);
 				p.colourImage = processedImages.get(0);
@@ -101,17 +110,24 @@ public class ApplicationUtil {
 		return ds;
 	}
 
-	public static PersonDataset performEigenfaceFeatureExtractionOnDataset(PersonDataset ds) {
-		List<Person> personList = ds.getPersonList();
-		EigenfaceHandler efh = new EigenfaceHandler(ds.getColourImageList(),
-				ds.getDepthImageList());
-		for (Person p : personList) {
+	public static List<PersonDataset> performEigenfaceFeatureExtractionOnDataset(PersonDataset trainingSet, PersonDataset testingSet) {
+		List<Person> trainingPersonList = trainingSet.getPersonList();
+		EigenfaceHandler efh = new EigenfaceHandler(trainingSet.getColourImageList(),
+				trainingSet.getDepthImageList());
+		for (Person p : trainingPersonList) {
 			List<List<Double>> featureVector = efh.findFeatureVector(p.colourImage, p.depthImage);
 			List<Double> fv = flattenList(featureVector);
 			p.setFeatureVector(fv);
 		}
-		ds.setPersonList(personList);
-		return ds;
+		List<Person> testingPersonList = testingSet.getPersonList();
+		for (Person p : testingPersonList) {
+			List<List<Double>> featureVector = efh.findFeatureVector(p.colourImage, p.depthImage);
+			List<Double> fv = flattenList(featureVector);
+			p.setFeatureVector(fv);
+		}
+		trainingSet.setPersonList(trainingPersonList);
+		testingSet.setPersonList(testingPersonList);
+		return Arrays.asList(trainingSet, testingSet);
 	}
 
 	public static PersonDataset performLBPFeatureExtractionOnDataset(PersonDataset ds, int noOfSubImages, int population, 

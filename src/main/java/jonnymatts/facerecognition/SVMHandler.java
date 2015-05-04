@@ -11,7 +11,7 @@ import libsvm.*;
 public class SVMHandler {
 	
 	public String getClassifierName() {
-		return "_SVM_";
+		return "_SVM";
 	}
 	
 	private svm_model model;
@@ -86,5 +86,4 @@ public class SVMHandler {
 		prob.y = y;
 		return prob;
 	}
-	
 }

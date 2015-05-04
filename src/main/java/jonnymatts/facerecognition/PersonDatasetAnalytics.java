@@ -25,7 +25,7 @@ public class PersonDatasetAnalytics {
 		List<List<Person>> bestLists = new ArrayList<List<Person>>();
 		
 		// Calculate the needed sizes for the training and testing lists
-		int trainingSetSize = (int)(set.size() * 0.8);
+		int trainingSetSize = (int)(set.size() * 0.5);
 		int testingSetSize = set.size() - trainingSetSize;
 		
 		for(int i = 0; i < numberOfGuesses; i++) {
@@ -75,9 +75,9 @@ public class PersonDatasetAnalytics {
 		List<Double> trainingAgeReport = getBiometricReportForList(trainingList, Biometric.AGE);
 		List<Double> trainingEthnicityReport = getBiometricReportForList(trainingList, Biometric.ETHNICITY);
 		
-		double idealGenderValue = (1d / PersonGender.values().length);
-		double idealAgeValue = (1d / PersonAge.values().length);
-		double idealEthnicityValue = (1d / PersonEthnicity.values().length);
+		double idealGenderValue = (1d / (PersonGender.values().length - 1));
+		double idealAgeValue = (1d / (PersonAge.values().length - 1));
+		double idealEthnicityValue = (1d / (PersonEthnicity.values().length - 1));
 		
 		double trainingGenderFitness = trainingGenderReport.stream().map(d -> abs(idealGenderValue - d)).reduce(0d, Double::sum);
 		double trainingAgeFitness = trainingAgeReport.stream().map(d -> abs(idealAgeValue - d)).reduce(0d, Double::sum);

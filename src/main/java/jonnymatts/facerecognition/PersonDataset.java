@@ -1,5 +1,7 @@
 package jonnymatts.facerecognition;
 
+import static jonnymatts.facerecognition.ApplicationUtil.findPercentageCorrect;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,13 @@ public class PersonDataset {
 		personList = pl;
 	}
 	
+	DatasetResult getDatasetResult() {
+		double genderCorrect = findPercentageCorrect(checkPredictedClassesForBiometric(Biometric.GENDER));
+		double ageCorrect = findPercentageCorrect(checkPredictedClassesForBiometric(Biometric.AGE));
+		double ethnicityCorrect = findPercentageCorrect(checkPredictedClassesForBiometric(Biometric.ETHNICITY));
+		return new DatasetResult(genderCorrect, ageCorrect, ethnicityCorrect);
+	}
+	
 	List<Boolean> checkPredictedClassesForBiometric(Biometric biometric) {
 		switch(biometric) {
 			case AGE:
@@ -66,7 +75,7 @@ public class PersonDataset {
 		return personList.stream().map(i -> i.colourImage).collect(Collectors.toList());
 	}
 	
-	List<String> getListOfUnProcessedPeople() {
-		return personList.stream().filter(p -> !p.getIsPreprocessed()).map(p -> p.name).collect(Collectors.toList());
+	List<Person> getListOfUnProcessedPeople() {
+		return personList.stream().filter(p -> !p.getIsPreprocessed()).collect(Collectors.toList());
 	}
 }

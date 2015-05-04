@@ -191,16 +191,16 @@ public class RISEHandler {
 				redImage.put(j, i, (r - ((g + b) / 2)));
 				greenImage.put(j, i, (g - ((r + b) / 2)));
 				blueImage.put(j, i, (b - ((g + r) / 2)));
-				yellowImage.put(j, i, max((((r + g) / 2) - abs((r - g) / 2)), 0));
+				yellowImage.put(j, i, max((((r + g) / 2) - abs((r - g) / 2) - b), 0));
 			}
 		}
 		
 		// Find Gaussian pyramids
-		List<Mat> intensityGaussianPyramid = findGaussianPyrmaidForImage(intensityImage, 8);
-		List<Mat> redGaussianPyramid = findGaussianPyrmaidForImage(redImage, 8);
-		List<Mat> greenGaussianPyramid = findGaussianPyrmaidForImage(greenImage, 8);
-		List<Mat> blueGaussianPyramid = findGaussianPyrmaidForImage(blueImage, 8);
-		List<Mat> yellowGaussianPyramid = findGaussianPyrmaidForImage(yellowImage, 8);
+		List<Mat> intensityGaussianPyramid = findGaussianPyramidForImage(intensityImage, 8);
+		List<Mat> redGaussianPyramid = findGaussianPyramidForImage(redImage, 8);
+		List<Mat> greenGaussianPyramid = findGaussianPyramidForImage(greenImage, 8);
+		List<Mat> blueGaussianPyramid = findGaussianPyramidForImage(blueImage, 8);
+		List<Mat> yellowGaussianPyramid = findGaussianPyramidForImage(yellowImage, 8);
 		
 		// Extract intensity and colour feature maps
 		List<Mat> intensityFeatureMaps = new ArrayList<Mat>();

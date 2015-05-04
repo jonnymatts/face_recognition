@@ -28,6 +28,26 @@ public class ImageHelper {
 	
 	public static List<LBPColour> lbpColourList = Arrays.asList(LBPColour.RED, LBPColour.GREEN, LBPColour.BLUE);
 	
+	public static Mat histogramEqualiseImage(Mat image) {
+		List<Mat> channels = new ArrayList<Mat>();
+		Mat equalizedImage = new Mat();
+		
+		// Convert image to HSV
+		Imgproc.cvtColor(image, equalizedImage, Imgproc.COLOR_BGR2HSV);
+		
+		// Split image into three channels
+		Core.split(equalizedImage,channels);
+		
+		// Eqaulise using V (intensity)
+		Imgproc.equalizeHist(channels.get(2), channels.get(2));
+		
+		Core.merge(channels,equalizedImage);
+		
+		// Convert back to RGB
+		Imgproc.cvtColor(equalizedImage, equalizedImage, Imgproc.COLOR_HSV2BGR);
+		return equalizedImage;
+	}
+	
 	public static List<Mat> preprocessImages(Mat colourImage, Mat depthImage, int finalImageDimension) {
 		
 		try {
@@ -48,11 +68,14 @@ public class ImageHelper {
 			colourImage = colourImage.submat(faceRect);
 			depthImage = depthImage.submat(faceRect);
 			
+			// Histogram equalise colour image
+			Mat equalisedColourImage = histogramEqualiseImage(colourImage);
+			
 			// Resize images to the needed dimension
-			Imgproc.resize(colourImage, colourImage, new Size(finalImageDimension, finalImageDimension));
+			Imgproc.resize(equalisedColourImage, equalisedColourImage, new Size(finalImageDimension, finalImageDimension));
 			Imgproc.resize(depthImage, depthImage, new Size(finalImageDimension, finalImageDimension));
 
-			return Arrays.asList(colourImage, depthImage);
+			return Arrays.asList(equalisedColourImage, depthImage);
 		} catch (Exception e) {
 			return new ArrayList<Mat>();
 		}
@@ -107,30 +130,29 @@ public class ImageHelper {
 		// Needed to ensure that resolution is not lost in return image, no idea why
 		Mat2BufferedImage(normalisedImage);
 		
+		// Find mean of local maxima values around global maxima
+		int nBoundary = ((localNeighbourhoodSize + 1) / 2) - 1; 
+		int nXMinIndex = max(0, (globalMaximaX - nBoundary));
+		int nXMaxIndex = min(img.cols(), (globalMaximaX + nBoundary));
+		int nYMinIndex = max(0, (globalMaximaY - nBoundary));
+		int nYMaxIndex = min(img.rows(), (globalMaximaY + nBoundary));
+		
+		double localSum = 0;
+		int localCount = 0;
+		for(int k = nXMinIndex; k < nXMaxIndex; k++) {
+			for(int l = nYMinIndex; l < nYMaxIndex; l++) {
+				double val = normalisedImage.get(l, k)[0];
+				localSum += val;
+				localCount++;
+			}
+		}
+		double localAverage = localSum / localCount;
+		
 		for(int i = 0; i < img.cols(); i++) {
 			for(int j = 0; j < img.rows(); j++) {
 				// Get pixel value
 				double pixelVal = normalisedImage.get(j, i)[0];
-				// Find mean of local maxima values around global maxima
-				int nBoundary = ((localNeighbourhoodSize + 1) / 2) - 1; 
-				int nXMinIndex = max(0, (globalMaximaX - nBoundary));
-				int nXMaxIndex = min(img.cols(), (globalMaximaX + nBoundary));
-				int nYMinIndex = max(0, (globalMaximaY - nBoundary));
-				int nYMaxIndex = min(img.rows(), (globalMaximaY + nBoundary));
-				
-				double localSum = 0;
-				int localCount = 0;
-				for(int k = nXMinIndex; k < nXMaxIndex; k++) {
-					for(int l = nYMinIndex; l < nYMaxIndex; l++) {
-						double val = normalisedImage.get(l, k)[0];
-						localSum += val;
-						localCount++;
-					}
-				}
-				
-				double localAverage = localSum / localCount;
 				double localDifference = abs(pixelVal - localAverage);
-				
 				double newVal = (localDifference > differenceCutoff) ? (pixelVal) : 0;
 				normalisedImage.put(j, i, newVal);
 			}
@@ -140,9 +162,7 @@ public class ImageHelper {
 	}
 	
 	public static Mat normaliseDepthImage(Mat img) {
-		
 		Mat returnImg = new Mat(img.rows(), img.cols(), CvType.CV_64FC1);
-		
 		for(int i = 0; i < img.cols(); i++) {
 			for(int j = 0; j < img.rows(); j++) {
 				double val = img.get(j, i)[0];
@@ -151,10 +171,8 @@ public class ImageHelper {
 				} else {
 					returnImg.put(j, i, val);
 				}
-				
 			}
 		}
-		
 		return returnImg;
 	}
 	
@@ -175,7 +193,7 @@ public class ImageHelper {
 		return gaborPyramid;
 	}
 	
-	public static List<Mat> findGaussianPyrmaidForImage(Mat img, int scale) {
+	public static List<Mat> findGaussianPyramidForImage(Mat img, int scale) {
 		List<Mat> gaussianPyramid = new ArrayList<Mat>();
 		gaussianPyramid.add(img);
 		Mat currentImage = img;

@@ -1,5 +1,6 @@
 package jonnymatts.facerecognition;
 
+import static jonnymatts.facerecognition.ApplicationUtil.flattenList;
 import static jonnymatts.facerecognition.ImageHelper.*;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
-public class EigenfaceHandler {
+public class EigenfaceHandler implements ProjectFeatureExtractor {
 
 	private Mat blueChannelMeanImage;
 	private Mat greenChannelMeanImage;
@@ -26,13 +27,13 @@ public class EigenfaceHandler {
 	private List<List<Mat>> colourEigenfaceList;
 	private List<Mat> depthEigenfaceList;
 	
-	public static String getExtractorName() {
+	public String getExtractorName() {
 		return "_EIG";
 	}
 
-	public EigenfaceHandler(List<Mat> cti, List<Mat> dti) {
-		colourTrainingImageList = cti;
-		depthTrainingImageList = dti;
+	public EigenfaceHandler(PersonDataset trainingDataset) {
+		colourTrainingImageList = trainingDataset.getColourImageList();
+		depthTrainingImageList = trainingDataset.getDepthImageList();
 		colourEigenfaceList = createEigenfaces();
 		depthEigenfaceList = createDepthEigenfaces();
 	}
@@ -289,5 +290,16 @@ public class EigenfaceHandler {
 				colourChannelEigenVectors.get(0).size(), imageSize);
 
 		return colourChannelEigenVectors;
+	}
+	
+	public PersonDataset performFeatureExtractionForDataset(PersonDataset ds, boolean sample) {
+		List<Person> personList = ds.getPersonList();
+		for (Person p : personList) {
+			List<List<Double>> featureVector = findFeatureVector(p.colourImage, p.depthImage);
+			List<Double> fv = flattenList(featureVector);
+			p.setFeatureVector(fv);
+		}
+		ds.setPersonList(personList);
+		return ds;
 	}
 }

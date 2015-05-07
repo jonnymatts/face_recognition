@@ -7,7 +7,7 @@ import net.sf.javaml.classification.KNearestNeighbors;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.Instance;
 
-public class KNNHandler {
+public class KNNHandler implements ProjectClassifier {
 
 	private Classifier classifier;
 	private int numberOfNeighbours;
@@ -34,12 +34,12 @@ public class KNNHandler {
 			boolean nullObject = predictedClassObject == (null);
 			int predictedClassValue = nullObject ? -1 : Integer.valueOf((int)predictedClassObject);
 			switch(biometric) {
-				case AGE: p.predictedAge = PersonAge.valueOf(predictedClassValue); break;
+				case AGE: p.predictedAge = PersonAge.predictedValueOf(predictedClassValue); break;
+				case AGEFINE: p.predictedAgeFine = PersonAgeFine.predictedValueOf(predictedClassValue); break;
 				case ETHNICITY: p.predictedEthnicity = PersonEthnicity.valueOf(predictedClassValue); break;
 				default: p.predictedGender = PersonGender.valueOf(predictedClassValue); break;
 			}
 		}
-		testingSet.setPersonList(pList);
-		return testingSet;
+		return new PersonDataset(testingSet.getName(), pList);
 	}
 }

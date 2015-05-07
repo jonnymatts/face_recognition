@@ -29,7 +29,7 @@ public class LocalBinaryPatternHandlerTest {
 		testMat.put(2, 1, 7);
 		testMat.put(2, 2, 1);
 
-		lbph = new LocalBinaryPatternHandler(8, 1, false, false, false);
+		lbph = new LocalBinaryPatternHandler(8, 1, false, false, false, 5);
 	}
 
 	@Test
@@ -56,10 +56,10 @@ public class LocalBinaryPatternHandlerTest {
 
 	@Test
 	public void testIsUniformPattern() {
-		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 256);
+		assertEquals(lbph.findFeatureVector(testMat).get(0).size(), 256);
 
 		lbph.setUseUniformPatterns(true);
-		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 59);
+		assertEquals(lbph.findFeatureVector(testMat).get(0).size(), 59);
 	}
 	
 	@Test
@@ -80,14 +80,14 @@ public class LocalBinaryPatternHandlerTest {
 	public void testIsRotationInvariant() {
 		lbph.setUseRotationInvariance(true);
 		lbph.setUseUniformPatterns(false);
-		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 37);
+		assertEquals(lbph.findFeatureVector(testMat).get(0).size(), 37);
 	}
 	
 	@Test
 	public void testIsRotationInvariantAndUsesUniformPatterns () {
 		lbph.setUseRotationInvariance(true);
 		lbph.setUseUniformPatterns(true);
-		assertEquals(lbph.findFeatureVector(testMat, 5).get(0).size(), 9);
+		assertEquals(lbph.findFeatureVector(testMat).get(0).size(), 9);
 	}
 	
 	@Test
@@ -95,6 +95,6 @@ public class LocalBinaryPatternHandlerTest {
 		lbph.setUseRotationInvariance(false);
 		lbph.setUseUniformPatterns(false);
 		lbph.setUseRGB(true);
-		assertEquals(lbph.findFeatureVector(testMat, 5).size(), (75));
+		assertEquals(lbph.findFeatureVector(testMat).size(), (75));
 	}
 }

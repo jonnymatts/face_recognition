@@ -1,4 +1,4 @@
-IITD-fold1_testing
+IITD_fold1_testing
 0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/1/RGB/8.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/1/Depth/8.jpg
 0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/2/RGB/91.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/2/Depth/91.jpg
 0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/4/RGB/6.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/4/Depth/6.jpg

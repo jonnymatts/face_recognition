@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Biometric {
-	GENDER(0), AGE(1), ETHNICITY(2);
+	GENDER(0), AGE(1), ETHNICITY(2), AGEFINE(3);
 	
 	private int value;
 	

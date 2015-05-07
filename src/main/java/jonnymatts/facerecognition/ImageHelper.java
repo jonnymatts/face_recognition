@@ -28,6 +28,15 @@ public class ImageHelper {
 	
 	public static List<LBPColour> lbpColourList = Arrays.asList(LBPColour.RED, LBPColour.GREEN, LBPColour.BLUE);
 	
+	public static List<Double> sampleFeatureVector(List<Double> fv) {
+		List<Double> returnList = new ArrayList<Double>();
+		int factor = max((int)fv.size() / 300, 1);
+		for(int i = 0; i < fv.size(); i+=factor){
+			returnList.add(fv.get(i));
+		}
+		return returnList;
+	}
+	
 	public static Mat histogramEqualiseImage(Mat image) {
 		List<Mat> channels = new ArrayList<Mat>();
 		Mat equalizedImage = new Mat();
@@ -161,16 +170,30 @@ public class ImageHelper {
 		return normalisedImage;
 	}
 	
+	public static double normaliseVal(double val) {
+		return (val == 255d) ? 254 : val;
+	}
+	
+	public static Mat normaliseColourImage(Mat img) {
+		Mat returnImg = new Mat(img.rows(), img.cols(), CvType.CV_64FC3);
+		for(int i = 0; i < img.cols(); i++) {
+			for(int j = 0; j < img.rows(); j++) {
+				double bval = normaliseVal(img.get(j, i)[0]);
+				double gval = normaliseVal(img.get(j, i)[1]);
+				double rval = normaliseVal(img.get(j, i)[2]);
+				double[] valArray = {bval, gval, rval}; 
+				returnImg.put(j, i, valArray);
+			}
+		}
+		return returnImg;
+	}
+	
 	public static Mat normaliseDepthImage(Mat img) {
 		Mat returnImg = new Mat(img.rows(), img.cols(), CvType.CV_64FC1);
 		for(int i = 0; i < img.cols(); i++) {
 			for(int j = 0; j < img.rows(); j++) {
 				double val = img.get(j, i)[0];
-				if(val == 255d) {
-					returnImg.put(j, i, 254.0);
-				} else {
-					returnImg.put(j, i, val);
-				}
+				returnImg.put(j, i, normaliseVal(val));
 			}
 		}
 		return returnImg;

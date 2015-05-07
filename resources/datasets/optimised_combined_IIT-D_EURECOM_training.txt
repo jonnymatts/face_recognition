@@ -1,0 +1,66 @@
+optimised_combined_IIT-D_EURECOM_training
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/57/RGB/38.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/57/Depth/38.jpg
+0,28,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0026/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0026/s1/depth/Neutral.bmp
+1,30,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0019/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0019/s2/depth/Neutral.bmp
+0,29,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0033/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0033/s2/depth/Neutral.bmp
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/39/RGB/68.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/39/Depth/68.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/77/RGB/32.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/77/Depth/32.jpg
+1,31,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0015/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0015/s2/depth/Neutral.bmp
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/11/RGB/30.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/11/Depth/30.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/102/RGB/26.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/102/Depth/26.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/91/RGB/49.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/91/Depth/49.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/27/RGB/3.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/27/Depth/3.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/34/RGB/35.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/34/Depth/35.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/11/RGB/57.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/11/Depth/57.jpg
+0,30,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0046/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0046/s1/depth/Neutral.bmp
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/94/RGB/59.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/94/Depth/59.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/53/RGB/7.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/53/Depth/7.jpg
+1,30,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0043/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0043/s1/depth/Neutral.bmp
+0,36,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0001/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0001/s1/depth/Neutral.bmp
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/86/RGB/74.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/86/Depth/74.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/67/RGB/46.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/67/Depth/46.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/25/RGB/22.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/25/Depth/22.jpg
+0,34,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0041/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0041/s2/depth/Neutral.bmp
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/44/RGB/14.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/44/Depth/14.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/105/RGB/45.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/105/Depth/45.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/72/RGB/34.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/72/Depth/34.jpg
+1,28,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0051/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0051/s2/depth/Neutral.bmp
+1,30,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0027/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0027/s2/depth/Neutral.bmp
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/35/RGB/35.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/35/Depth/35.jpg
+0,35,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0021/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0021/s1/depth/Neutral.bmp
+0,29,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0037/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0037/s2/depth/Neutral.bmp
+1,28,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0012/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0012/s1/depth/Neutral.bmp
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/65/RGB/8.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/65/Depth/8.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/30/RGB/5.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/30/Depth/5.jpg
+1,30,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0004/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0004/s1/depth/Neutral.bmp
+1,28,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0035/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0035/s1/depth/Neutral.bmp
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/29/RGB/18.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/29/Depth/18.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/93/RGB/33.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/93/Depth/33.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/98/RGB/47.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/98/Depth/47.jpg
+0,31,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0029/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0029/s2/depth/Neutral.bmp
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/96/RGB/38.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/96/Depth/38.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/67/RGB/55.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/67/Depth/55.jpg
+0,28,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0042/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0042/s2/depth/Neutral.bmp
+0,30,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0030/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0030/s1/depth/Neutral.bmp
+0,32,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0036/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0036/s1/depth/Neutral.bmp
+0,32,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0047/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0047/s2/depth/Neutral.bmp
+1,30,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0013/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0013/s1/depth/Neutral.bmp
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/51/RGB/31.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/51/Depth/31.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/39/RGB/67.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/39/Depth/67.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/74/RGB/22.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/74/Depth/22.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/77/RGB/43.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/77/Depth/43.jpg
+1,28,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0010/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0010/s2/depth/Neutral.bmp
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/13/RGB/43.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/13/Depth/43.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/72/RGB/31.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/72/Depth/31.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/105/RGB/32.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/105/Depth/32.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/16/RGB/43.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/16/Depth/43.jpg
+0,29,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0049/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0049/s2/depth/Neutral.bmp
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/50/RGB/18.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/50/Depth/18.jpg
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/68/RGB/53.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/68/Depth/53.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/70/RGB/13.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/70/Depth/13.jpg
+0,32,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0034/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0034/s2/depth/Neutral.bmp
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/13/RGB/32.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/13/Depth/32.jpg
+0,33,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0022/s2/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0022/s2/depth/Neutral.bmp
+0,29,0,/resources/face_testing_images/EURECOM Kinect Face Dataset/0045/s1/RGB/Neutral.bmp,/resources/face_testing_images/EURECOM Kinect Face Dataset/0045/s1/depth/Neutral.bmp
+1,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/104/RGB/3.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/104/Depth/3.jpg
+0,-1,1,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/76/RGB/52.jpg,/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/training/76/Depth/52.jpg

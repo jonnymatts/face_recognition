@@ -1,6 +1,7 @@
 package jonnymatts.facerecognition;
 
 import static java.lang.Math.*;
+import static jonnymatts.facerecognition.ApplicationUtil.flattenList;
 import static jonnymatts.facerecognition.ImageHelper.*;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import org.opencv.core.Mat;
 
 import com.google.common.primitives.Ints;
 
-public class LocalBinaryPatternHandler {
+public class LocalBinaryPatternHandler implements ProjectFeatureExtractor {
 
 	private boolean useUniformPatterns;
 	private boolean useRotationInvariance;
@@ -23,9 +24,9 @@ public class LocalBinaryPatternHandler {
 	private int population;
 	private int radius;
 	private List<Double> histogramBinList;
+	private int noOfSubImages;
 	
-	public static String getExtractorName(int population, int radius, int noOfSubImages, boolean useUniformPatterns, 
-			boolean useRotationInvariance, boolean useRGB) {
+	public String getExtractorName() {
 		String returnString = "_LBP_" + population + "_" + radius + "_" + noOfSubImages;
 		if(useUniformPatterns) returnString += "_UP";
 		if(useRotationInvariance) returnString += "_RI";
@@ -62,12 +63,13 @@ public class LocalBinaryPatternHandler {
 		useRGB = b;
 	}
 
-	public LocalBinaryPatternHandler(int p, int r, boolean u, boolean ri, boolean rgb) {
+	public LocalBinaryPatternHandler(int p, int r, boolean u, boolean ri, boolean rgb, int n) {
 		population = p;
 		radius = r;
 		useUniformPatterns = u;
 		useRotationInvariance = ri;
 		useRGB = rgb;
+		noOfSubImages = n;
 		histogramBinList = createHistogramBinList();
 	}
 	
@@ -202,7 +204,7 @@ public class LocalBinaryPatternHandler {
 	}
 
 	// Find the feature vector for given image, population and radius
-	public List<List<Double>> findFeatureVector(Mat img, int noOfSubImgs) {
+	public List<List<Double>> findFeatureVector(Mat img) {
 		
 		if(!useRGB) img.convertTo(img, CvType.CV_8U);
 		
@@ -211,11 +213,11 @@ public class LocalBinaryPatternHandler {
 
 		// Split image into grid of sub-images
 		List<Mat> subImgList = new ArrayList<Mat>();
-		int subImgWidth = (int) floor(img.cols() / noOfSubImgs);
-		int subImgHeight = (int) floor(img.rows() / noOfSubImgs);
+		int subImgWidth = (int) floor(img.cols() / noOfSubImages);
+		int subImgHeight = (int) floor(img.rows() / noOfSubImages);
 
-		for (int i = 0; i < noOfSubImgs; i++) {
-			for (int j = 0; j < noOfSubImgs; j++) {
+		for (int i = 0; i < noOfSubImages; i++) {
+			for (int j = 0; j < noOfSubImages; j++) {
 				
 				// Find x and y values for sub-image vertices
 				int iIndex = i * subImgWidth;
@@ -324,4 +326,15 @@ public class LocalBinaryPatternHandler {
 		return convertBinaryListToInteger(nbhBinList).doubleValue();
 	}
 
+	public PersonDataset performFeatureExtractionForDataset(PersonDataset ds, boolean sample) {
+		List<Person> personList = ds.getPersonList();
+		for (Person p : personList) {
+			List<List<Double>> featureVector = findFeatureVector(p.colourImage);
+			List<Double> fv = flattenList(featureVector);
+			if(sample) fv = sampleFeatureVector(fv);
+			p.setFeatureVector(fv);
+		}
+		ds.setPersonList(personList);
+		return ds;
+	}
 }

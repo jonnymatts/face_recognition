@@ -1,7 +1,6 @@
 package jonnymatts.facerecognition;
 
 import static java.lang.Integer.parseInt;
-import static java.lang.Math.abs;
 import static jonnymatts.facerecognition.ImageHelper.preprocessImages;
 
 import java.io.*;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.opencv.core.Mat;
@@ -22,12 +22,205 @@ public class ApplicationUtil {
 
 	public static final String userDir = System.getProperty("user.dir");
 	
+	public static List<ExperimentData> getDatasetsForExperiment() throws IOException {
+		PersonDataset iitdTrain = readDataset("/resources/datasets/IIT-D_fold1_training.txt");
+		PersonDataset iitdTest = readDataset("/resources/datasets/IIT-D_fold1_testing.txt");
+		PersonDataset eurecomTrain = readDataset("/resources/datasets/EURECOM_neutral_dataset_sitting1.txt");
+		PersonDataset eurecomTest = readDataset("/resources/datasets/EURECOM_neutral_dataset_sitting2.txt");
+		
+		String iitdOptName = "IIT-D_optimised"; 
+		PersonDatasetAnalytics pda = new PersonDatasetAnalytics(iitdTrain);
+		pda.addPeopleToPersonList(iitdTest);
+		List<PersonDataset> sets = pda.getOptimizedDatasets(iitdOptName, 200, false);
+		PersonDataset iitdTrainOpt = sets.get(0);
+		PersonDataset iitdTestOpt = sets.get(1);
+		saveDataset(iitdTrainOpt);
+		saveDataset(iitdTestOpt);
+		
+		String eurecomOptName = "EURECOM_optimised";
+		pda = new PersonDatasetAnalytics(eurecomTrain);
+		pda.addPeopleToPersonList(eurecomTest);
+		sets = pda.getOptimizedDatasets(eurecomOptName, 200, false);
+		PersonDataset eurecomTrainOpt = sets.get(0);
+		PersonDataset eurecomTestOpt = sets.get(1);
+		saveDataset(eurecomTrainOpt);
+		saveDataset(eurecomTestOpt);
+		
+		String eurecomOptAfName = "EURECOM_optimised_ageFine";
+		pda = new PersonDatasetAnalytics(eurecomTrain);
+		pda.addPeopleToPersonList(eurecomTest);
+		sets = pda.getOptimizedDatasets(eurecomOptAfName, 200, true);
+		PersonDataset eurecomTrainOptAf = sets.get(0);
+		PersonDataset eurecomTestOptAf = sets.get(1);
+		saveDataset(eurecomTrainOptAf);
+		saveDataset(eurecomTestOptAf);
+		
+		String fullCombName = "fully_combined_IIT-D_EURECOM";
+		pda = new PersonDatasetAnalytics(iitdTrain);
+		pda.addPeopleToPersonList(iitdTest);
+		pda.addPeopleToPersonList(eurecomTrain);
+		pda.addPeopleToPersonList(eurecomTest);
+		sets = pda.getOptimizedDatasets(fullCombName, 200, false);
+		PersonDataset fullCombinedTrain = sets.get(0);
+		PersonDataset fullCombinedTest = sets.get(1);
+		saveDataset(fullCombinedTrain);
+		saveDataset(fullCombinedTest);
+		
+		String optCombName = "optimised_combined_IIT-D_EURECOM";
+		pda = new PersonDatasetAnalytics(iitdTrainOpt);
+		pda.addPeopleToPersonList(eurecomTrainOpt);
+		sets = pda.getOptimizedDatasets("optimised_combined_IIT-D_EURECOM", 200, false);
+		PersonDataset optCombinedTrain = sets.get(0);
+		PersonDataset optCombinedTest = sets.get(1);
+		saveDataset(optCombinedTrain);
+		saveDataset(optCombinedTest);
+		
+		List<ExperimentData> dataList = Arrays.asList(new ExperimentData("IIT-D", iitdTrain, iitdTest, false),
+													  new ExperimentData("EURECOM", eurecomTrain, eurecomTest, false),
+													  new ExperimentData("EURECOM_ageFine", eurecomTrain, eurecomTest, true),
+													  new ExperimentData(iitdOptName, iitdTrainOpt, iitdTestOpt, false),
+													  new ExperimentData(eurecomOptName, eurecomTrainOpt, eurecomTestOpt, false),
+													  new ExperimentData(eurecomOptAfName, eurecomTrainOptAf, eurecomTestOptAf, true),
+													  new ExperimentData(fullCombName, fullCombinedTrain, fullCombinedTest, false),
+													  new ExperimentData(optCombName, optCombinedTrain, optCombinedTest, false));
+		return dataList;
+	}
+	
+	public static String getTimeInMinutesAndSeconds(long millis){
+		return String.format("%d min, %d sec", 
+		    TimeUnit.MILLISECONDS.toMinutes(millis),
+		    TimeUnit.MILLISECONDS.toSeconds(millis) - 
+		    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+		);
+	}
+	
+	public static List<DatasetResult> runFeatureExtractionTestsForGivenExtractor(String name, PersonDataset trainingSet,
+			PersonDataset testingSet, ProjectFeatureExtractor fe, List<ProjectClassifier> classifiers,
+			boolean sampleFeatureVector, boolean useAgeFine) throws IOException {
+		
+		List<DatasetResult> resultSets = new ArrayList<DatasetResult>();
+		
+		long startTime = System.currentTimeMillis();
+		
+		// Perform feature extraction on both datasets		
+		PersonDataset eTrainingSet = fe.performFeatureExtractionForDataset(trainingSet, sampleFeatureVector);
+		PersonDataset eTestingSet = fe.performFeatureExtractionForDataset(testingSet, sampleFeatureVector);
+		
+		long endTime = System.currentTimeMillis();
+		long featureExtractorTime = endTime - startTime;
+
+		
+		for(ProjectClassifier classifier : classifiers) {
+			
+			// Train the classifer, then predict the class of testing data for each biometric
+			startTime = System.currentTimeMillis();
+			classifier.trainForBiometric(eTrainingSet, Biometric.GENDER);
+			endTime = System.currentTimeMillis();
+			long trainTime = endTime - startTime;
+			
+			startTime = System.currentTimeMillis();
+			PersonDataset resultSet = classifier.predictClassesForBiometric(eTestingSet, Biometric.GENDER);
+			endTime = System.currentTimeMillis();
+			long predictTime = endTime - startTime;
+
+			if(useAgeFine) {
+				classifier.trainForBiometric(eTrainingSet, Biometric.AGEFINE);
+				resultSet = classifier.predictClassesForBiometric(resultSet, Biometric.AGEFINE);
+			} else {
+				classifier.trainForBiometric(eTrainingSet, Biometric.AGE);
+				resultSet = classifier.predictClassesForBiometric(resultSet, Biometric.AGE);
+			}
+
+			classifier.trainForBiometric(eTrainingSet, Biometric.ETHNICITY);
+			resultSet = classifier.predictClassesForBiometric(resultSet, Biometric.ETHNICITY);
+
+			// Write experiment output to file
+			String resultsName = name + fe.getExtractorName() + classifier.getClassifierName();
+			if(sampleFeatureVector) resultsName += "_sampled";
+			resultSet.setName(resultsName);
+			saveResultSet(resultSet.getName(), resultSet, useAgeFine);
+			resultSets.add(resultSet.getDatasetResult(featureExtractorTime, trainTime, predictTime, useAgeFine));
+		}
+		return resultSets;
+	}
+	
+	public static void runFeatureExtractionTestsOnDatasets(String name, PersonDataset trainingSet, PersonDataset testingSet,
+			boolean sampleFeatureVector, boolean useAgeFine) throws IOException {
+		List<DatasetResult> resultSets = new ArrayList<DatasetResult>();
+		
+		long totalStartTime = System.currentTimeMillis();
+		
+		// Pre-process all the images
+		trainingSet.setPersonList(performPreprocessing(trainingSet, 128));
+		testingSet.setPersonList(performPreprocessing(testingSet, 128));
+		
+		// Initialise all the feature extractors
+		LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler(8, 1, true, false, false, 5);
+		EigenfaceHandler efh = new EigenfaceHandler(trainingSet);
+		RISEHandler rh = new RISEHandler(3, 15, 1, (trainingSet.getPersonList().get(0).colourImage.rows() / 10), 0.02, 15,
+				230, 30, 25);
+		GradientLBPHandler glbph = new GradientLBPHandler(8);
+		
+		// Initialise all the classifiers
+		ProjectClassifier knn1 = new KNNHandler(1);
+		ProjectClassifier knn3 = new KNNHandler(3);
+		ProjectClassifier svm = new SVMHandler();
+		List<ProjectClassifier> classifiers = Arrays.asList(knn1, knn3, svm);
+		
+		
+		String reportName = sampleFeatureVector ? name + "_sampled" : name;
+		// Run all the feature extraction tests
+		long startTime = System.currentTimeMillis();
+		System.out.println("[" + reportName + "] Running LBP tests...");
+		resultSets.addAll(runFeatureExtractionTestsForGivenExtractor(name, trainingSet, testingSet, lbph, classifiers, sampleFeatureVector, useAgeFine));
+		long endTime = System.currentTimeMillis();
+		System.out.println("[" + reportName + "] LBP tests took " + getTimeInMinutesAndSeconds(endTime - startTime) + ". Running RGB-LBP tests...");
+		
+		lbph.setUseRGB(true);
+		startTime = System.currentTimeMillis();
+		resultSets.addAll(runFeatureExtractionTestsForGivenExtractor(name, trainingSet, testingSet, lbph, classifiers, sampleFeatureVector, useAgeFine));
+		endTime = System.currentTimeMillis();
+		System.out.println("[" + reportName + "] RGB-LBP tests took " + getTimeInMinutesAndSeconds(endTime - startTime) + ". Running Eigenface tests...");
+		
+		startTime = System.currentTimeMillis();
+		resultSets.addAll(runFeatureExtractionTestsForGivenExtractor(name, trainingSet, testingSet, efh, classifiers, sampleFeatureVector, useAgeFine));
+		endTime = System.currentTimeMillis();
+		System.out.println("[" + reportName + "] Eigenface tests took " + getTimeInMinutesAndSeconds(endTime - startTime) + ". Running GLBP tests...");
+		
+		startTime = System.currentTimeMillis();
+		resultSets.addAll(runFeatureExtractionTestsForGivenExtractor(name, trainingSet, testingSet, glbph, classifiers, sampleFeatureVector, useAgeFine));
+		endTime = System.currentTimeMillis();
+		System.out.println("[" + reportName + "] GLBP tests took " + getTimeInMinutesAndSeconds(endTime - startTime) + ". Running RISE tests...");
+		
+		// Resize images for RISEHandler
+		trainingSet.setPersonList(trainingSet.resizeImages(256));
+		testingSet.setPersonList(testingSet.resizeImages(256));
+		
+		startTime = System.currentTimeMillis();
+		resultSets.addAll(runFeatureExtractionTestsForGivenExtractor(name, trainingSet, testingSet, rh, classifiers, sampleFeatureVector, useAgeFine));
+		endTime = System.currentTimeMillis();
+		System.out.println("[" + reportName + "] RISE tests took " + getTimeInMinutesAndSeconds(endTime - startTime));
+		
+		long totalEndTime = System.currentTimeMillis();
+		
+		saveTestReport(reportName, resultSets, (totalEndTime - totalStartTime));
+	}
+	
+	public static String createIITDDatasetString(List<String> l, int i) {
+		String returnString = l.get(0);
+		returnString += "," + l.get(1);
+		returnString += "," + l.get(2);
+		returnString += ",/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/" + i + "/RGB/" + l.get(3) + ".jpg";
+		returnString += ",/resources/face_testing_images/IIIT-D Kinect RGB-D Face Database/fold1/testing/" + i + "/Depth/" + l.get(3) + ".jpg";
+		return returnString;
+	}
+	
 	public static DatasetResult averageDatasetResultList(List<DatasetResult> inputList) {
 		 double genderSum = inputList.stream().map(dr -> dr.genderCorrect).reduce(0d, Double::sum);
 		 double ageSum = inputList.stream().map(dr -> dr.ageCorrect).reduce(0d, Double::sum);
 		 double ethnicitySum = inputList.stream().map(dr -> dr.ethnicityCorrect).reduce(0d, Double::sum);
 		 int listSize = inputList.size();
-		 return new DatasetResult((genderSum / listSize), (ageSum / listSize), (ethnicitySum / listSize));
+		 return new DatasetResult("averaged_results", (genderSum / listSize), (ageSum / listSize), (ethnicitySum / listSize));
 	}
 	
 	public static String createCommaSeperatedString(List<String> inputList) {
@@ -42,6 +235,7 @@ public class ApplicationUtil {
 	public static String getBiometricString(Biometric biometric) {
 		switch (biometric) {
 			case AGE: return "_age_";
+			case AGEFINE: return "_ageFine_";
 			case ETHNICITY: return "_ethnicity_";
 			default: return "_gender_";
 		}
@@ -85,9 +279,9 @@ public class ApplicationUtil {
 		return pList;
 	}
 
-	public static PersonDataset performGLBPFeatureExtractionOnDataset(PersonDataset ds, int population, int radius) {
+	public static PersonDataset performGLBPFeatureExtractionOnDataset(PersonDataset ds, int population) {
 		List<Person> personList = ds.getPersonList();
-		GradientLBPHandler glbph = new GradientLBPHandler(population, radius);
+		GradientLBPHandler glbph = new GradientLBPHandler(population);
 		for (Person p : personList) {
 			List<List<Double>> featureVector = glbph.findFeatureVector(p.colourImage, p.depthImage);
 			List<Double> fv = flattenList(featureVector);
@@ -112,8 +306,7 @@ public class ApplicationUtil {
 
 	public static List<PersonDataset> performEigenfaceFeatureExtractionOnDataset(PersonDataset trainingSet, PersonDataset testingSet) {
 		List<Person> trainingPersonList = trainingSet.getPersonList();
-		EigenfaceHandler efh = new EigenfaceHandler(trainingSet.getColourImageList(),
-				trainingSet.getDepthImageList());
+		EigenfaceHandler efh = new EigenfaceHandler(trainingSet);
 		for (Person p : trainingPersonList) {
 			List<List<Double>> featureVector = efh.findFeatureVector(p.colourImage, p.depthImage);
 			List<Double> fv = flattenList(featureVector);
@@ -134,9 +327,9 @@ public class ApplicationUtil {
 			int radius, boolean useUniformPatterns, boolean useRotationInvariance, boolean useRGB) {
 		List<Person> personList = ds.getPersonList();
 		LocalBinaryPatternHandler lbph = new LocalBinaryPatternHandler(population, radius, useUniformPatterns,
-				useRotationInvariance, useRGB);
+				useRotationInvariance, useRGB, noOfSubImages);
 		for (Person p : personList) {
-			List<List<Double>> featureVector = lbph.findFeatureVector(p.colourImage, noOfSubImages);
+			List<List<Double>> featureVector = lbph.findFeatureVector(p.colourImage);
 			List<Double> fv = flattenList(featureVector);
 			p.setFeatureVector(fv);
 		}
@@ -209,17 +402,19 @@ public class ApplicationUtil {
 		bw.close();
 	}
 	
-	public static void saveResultSet(String name, PersonDataset ds) throws IOException {
+	public static void saveResultSet(String name, PersonDataset ds, boolean useAgeFine) throws IOException {
 		String fileName = name;
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir + "/resources/results/" + fileName + ".txt")));
 		bw.write(fileName);
 		bw.newLine();
 		for(Person p : ds.getPersonList()) {
 			String genderBoolean = String.valueOf(p.gender == p.predictedGender);
-			String ageBoolean = String.valueOf(p.age == p.predictedAge);
+			String ageString = useAgeFine ? p.ageFine.toString() : p.age.toString();
+			String agePredictedString = useAgeFine ? p.predictedAgeFine.toString() : p.predictedAge.toString();
+			String ageBoolean = useAgeFine ? String.valueOf(p.ageFine == p.predictedAgeFine) : String.valueOf(p.age == p.predictedAge); 
 			String ethnicityBoolean = String.valueOf(p.ethnicity == p.predictedEthnicity);
 			List<String> personList = Arrays.asList(p.name, p.gender.toString(), p.predictedGender.toString(), genderBoolean,
-															p.age.toString(), p.predictedAge.toString(), ageBoolean,
+															ageString, agePredictedString, ageBoolean,
 															p.ethnicity.toString(), p.predictedEthnicity.toString(), ethnicityBoolean);
 			String personString = createCommaSeperatedString(personList);
 			bw.write(personString);
@@ -243,13 +438,24 @@ public class ApplicationUtil {
 		return new PersonDataset(name, personList);
 	}
 	
+	public static void saveTestReport(String name, List<DatasetResult> drList, long time) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir + "/resources/test_reports/" + name + ".txt")));
+		bw.write(name + " - Test took " + getTimeInMinutesAndSeconds(time));
+		bw.newLine();
+		for (DatasetResult dr : drList) {
+			bw.write(dr.getResultString());
+			bw.newLine();
+		}
+		bw.close();
+	}
+	
 	public static void saveDataset(PersonDataset ds) throws IOException {
 		String fileName = ds.getName();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(userDir + "/resources/datasets/" + fileName + ".txt")));
 		bw.write(fileName);
 		bw.newLine();
 		for (Person p : ds.getPersonList()) {
-			String personString = p.gender.getValue() + "," + p.age.getValue() + "," + p.ethnicity.getValue() + "," + 
+			String personString = p.gender.getValue() + "," + p.actualAge + "," + p.ethnicity.getValue() + "," + 
 					p.colourImagePath + "," + p.depthImagePath; 
 			bw.write(personString);
 			bw.newLine();

@@ -1,0 +1,16 @@
+IIT-D - Test took 4 min, 22 sec
+[IIT-D_LBP_8_1_5_UP_KNN_1]: genderCorrect: 0.7735849056603774, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 0 min, 15 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_LBP_8_1_5_UP_KNN_3]: genderCorrect: 0.8679245283018868, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 0 min, 15 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_LBP_8_1_5_UP_SVM]: genderCorrect: 0.7358490566037735, ageCorrect: 1.0, ethnicityCorrect: 1.0, extractorTime: 0 min, 15 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_LBP_8_1_5_UP_RGB_KNN_1]: genderCorrect: 0.8113207547169812, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 0 min, 45 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_LBP_8_1_5_UP_RGB_KNN_3]: genderCorrect: 0.7547169811320755, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 0 min, 45 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_LBP_8_1_5_UP_RGB_SVM]: genderCorrect: 0.7924528301886793, ageCorrect: 1.0, ethnicityCorrect: 1.0, extractorTime: 0 min, 45 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_EIG_KNN_1]: genderCorrect: 0.4716981132075472, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 0 min, 20 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_EIG_KNN_3]: genderCorrect: 0.5283018867924528, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 0 min, 20 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_EIG_SVM]: genderCorrect: 0.5471698113207547, ageCorrect: 1.0, ethnicityCorrect: 1.0, extractorTime: 0 min, 20 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_GLBP_8_KNN_1]: genderCorrect: 0.6226415094339622, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 0 min, 20 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_GLBP_8_KNN_3]: genderCorrect: 0.6981132075471698, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 0 min, 20 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_GLBP_8_SVM]: genderCorrect: 0.5471698113207547, ageCorrect: 1.0, ethnicityCorrect: 1.0, extractorTime: 0 min, 20 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_RISE_25.0_KNN_1]: genderCorrect: 0.6415094339622641, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 2 min, 21 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_RISE_25.0_KNN_3]: genderCorrect: 0.5849056603773585, ageCorrect: 1.0, ethnicityCorrect: 0.0, extractorTime: 2 min, 21 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec
+[IIT-D_RISE_25.0_SVM]: genderCorrect: 0.7547169811320755, ageCorrect: 1.0, ethnicityCorrect: 1.0, extractorTime: 2 min, 21 sec, trainingTime: 0 min, 0 sec, predictingTime: 0 min, 0 sec

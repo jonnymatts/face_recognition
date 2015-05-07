@@ -8,26 +8,31 @@ import java.util.List;
 
 import libsvm.*;
 
-public class SVMHandler {
+public class SVMHandler implements ProjectClassifier {
 	
 	public String getClassifierName() {
 		return "_SVM";
 	}
 	
 	private svm_model model;
+	private double scalar;
+	
+	double scaleValue(double value) {
+		return value/scalar;
+	}
 	
 	public PersonDataset predictClassesForBiometric(PersonDataset testingSet, Biometric biometric) {
 		List<Person> pList = testingSet.getPersonList();
 		for(Person p : pList) {
-			int predictedClass = (int)svm_predict(model, getSVMNodeArray(p.getFeatureVector()));
+			double predictedClass = svm_predict(model, getSVMNodeArray(p.getFeatureVector()));
 			switch(biometric) {
-				case AGE: p.predictedAge = PersonAge.valueOf(predictedClass); break;
-				case ETHNICITY: p.predictedEthnicity = PersonEthnicity.valueOf(predictedClass); break;
-				default: p.predictedGender = PersonGender.valueOf(predictedClass); break;
+				case AGE: p.predictedAge = PersonAge.predictedValueOf((int)predictedClass); break;
+				case AGEFINE: p.predictedAgeFine = PersonAgeFine.predictedValueOf((int)predictedClass); break;
+				case ETHNICITY: p.predictedEthnicity = PersonEthnicity.valueOf((int)predictedClass); break;
+				default: p.predictedGender = PersonGender.valueOf((int)predictedClass); break;
 			}
 		}
-		testingSet.setPersonList(pList);
-		return testingSet;
+		return new PersonDataset(testingSet.getName(), pList);
 	}
 	
 	public void trainForBiometric(PersonDataset trainingSet, Biometric biometric) {
@@ -41,7 +46,7 @@ public class SVMHandler {
 			if(val != 0) {
 				svm_node node = new svm_node();
 				node.index = j;
-				node.value = val;
+				node.value = scaleValue(val);
 				nList.add(node);
 			}
 		}
@@ -68,6 +73,7 @@ public class SVMHandler {
 	
 	public svm_problem getSVMProblem(PersonDataset set, Biometric biometric) {
 		svm_problem prob = new svm_problem();
+		scalar = set.getLargestValueInDataset();
 		prob.l = set.size();
 		double[] y = new double[set.size()];
 		prob.x = new svm_node[set.size()][];
@@ -76,6 +82,7 @@ public class SVMHandler {
 			Person p = pList.get(i);
 			switch(biometric) {
 				case AGE: y[i] = p.age.getValue(); break;
+				case AGEFINE: y[i] = p.ageFine.getValue(); break;
 				case ETHNICITY: y[i] = p.ethnicity.getValue(); break;
 				default: y[i] = p.gender.getValue(); break;
 			}

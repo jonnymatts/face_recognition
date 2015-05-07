@@ -1,5 +1,7 @@
 package jonnymatts.facerecognition;
 
+import static jonnymatts.facerecognition.ApplicationUtil.flattenList;
+import static jonnymatts.facerecognition.ImageHelper.sampleFeatureVector;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -10,18 +12,18 @@ import java.util.List;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
-public class GradientLBPHandler {
+public class GradientLBPHandler implements ProjectFeatureExtractor {
 
 	private int population;
 	private LocalBinaryPatternHandler lbph;
 	
-	GradientLBPHandler(int p, int r) {
+	GradientLBPHandler(int p) {
 		population = p;
-		lbph = new LocalBinaryPatternHandler(8, 1, true, false, false);
+		lbph = new LocalBinaryPatternHandler(8, 1, true, false, false, 8);
 	}
 	
-	public static String getExtractorName(int population, int radius) {
-		return "_GLBP_" + population + "_" + radius;
+	public String getExtractorName() {
+		return "_GLBP_" + population;
 	}
 	
 	List<List<Double>> findFeatureVector(Mat colourImage, Mat depthImage) {
@@ -46,7 +48,7 @@ public class GradientLBPHandler {
 			depthDifferenceHistogramList.add(imageHistogram);
 		}
 		
-		List<List<Double>> lbpFeatureVector = lbph.findFeatureVector(colourImage, 8);
+		List<List<Double>> lbpFeatureVector = lbph.findFeatureVector(colourImage);
 		
 		depthDifferenceHistogramList.addAll(lbpFeatureVector);
 		
@@ -113,5 +115,17 @@ public class GradientLBPHandler {
 		}
 		
 		return depthDifferenceImage;
+	}
+
+	public PersonDataset performFeatureExtractionForDataset(PersonDataset ds, boolean sample) {
+		List<Person> personList = ds.getPersonList();
+		for (Person p : personList) {
+			List<List<Double>> featureVector = findFeatureVector(p.colourImage, p.depthImage);
+			List<Double> fv = flattenList(featureVector);
+			if(sample) fv = sampleFeatureVector(fv);
+			p.setFeatureVector(fv);
+		}
+		ds.setPersonList(personList);
+		return ds;
 	}
 }

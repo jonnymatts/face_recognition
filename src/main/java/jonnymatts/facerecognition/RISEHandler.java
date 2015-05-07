@@ -1,6 +1,7 @@
 package jonnymatts.facerecognition;
 
 import static java.lang.Math.*;
+import static jonnymatts.facerecognition.ApplicationUtil.flattenList;
 import static jonnymatts.facerecognition.ImageHelper.*;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-public class RISEHandler {
+public class RISEHandler implements ProjectFeatureExtractor {
 
 	private int radius;
 	private int kSize;
@@ -25,8 +26,8 @@ public class RISEHandler {
 	private double differenceCutoff;
 	private double pixelsPerHOGCell;
 	
-	public static String getExtractorName(int pixels) {
-		return "_RISE_" + pixels;
+	public String getExtractorName() {
+		return "_RISE_" + pixelsPerHOGCell;
 	}
 	
 	public RISEHandler(int r, int ks, double s, double l, double g, int lns, double m, double lmc, double pphc) {
@@ -67,20 +68,21 @@ public class RISEHandler {
 	public List<List<List<Double>>> findFeatureVector(Mat image, Mat depthImage) {
 		List<List<List<Double>>> histogramList = new ArrayList<List<List<Double>>>();
 		
-		// Normalise depth image
+		// Normalise images
+		Mat normalisedImage = normaliseColourImage(image);
 		Mat normalisedDepthImage = normaliseDepthImage(depthImage);
 		
 		// Find the four entropy maps of the image
 		List<Mat> entropyMapList = new ArrayList<Mat>();
 		int width = ((image.cols() * 3) / 4);
 		int height = ((image.rows() * 3) / 4);
-		entropyMapList.add(findEntropyImageForImageSubsection(image, (image.cols() / 2), (image.rows() / 2)));
-		entropyMapList.add(findEntropyImageForImageSubsection(image, height, width));
+		entropyMapList.add(findEntropyImageForImageSubsection(normalisedImage, (image.cols() / 2), (image.rows() / 2)));
+		entropyMapList.add(findEntropyImageForImageSubsection(normalisedImage, height, width));
 		entropyMapList.add(findEntropyImageForImageSubsection(normalisedDepthImage, (image.cols() / 2), (image.rows() / 2)));
 		entropyMapList.add(findEntropyImageForImageSubsection(normalisedDepthImage, height, width));
 		
 		// Find the saliency map of the image
-		Mat saliencyMap = findSaliencyMap(image);
+		Mat saliencyMap = findSaliencyMap(normalisedImage);
 		
 		// Find histograms for each map
 		for(Mat eMap : entropyMapList) {
@@ -354,4 +356,15 @@ public class RISEHandler {
 		return entropy;
 	}
 	
+	public PersonDataset performFeatureExtractionForDataset(PersonDataset ds, boolean sample) {
+		List<Person> personList = ds.getPersonList();
+		for (Person p : personList) {
+			List<List<List<Double>>> featureVector = findFeatureVector(p.colourImage, p.depthImage);
+			List<Double> fv = flattenList(featureVector.stream().map(l -> flattenList(l)).collect(Collectors.toList()));
+			if(sample) fv = sampleFeatureVector(fv);
+			p.setFeatureVector(fv);
+		}
+		ds.setPersonList(personList);
+		return ds;
+	}
 }

@@ -10,17 +10,19 @@ public class PersonDatasetAnalytics {
 	private PersonDataset set;
 	private HashMap<PersonGender, Integer> genderMap;
 	private HashMap<PersonAge, Integer> ageMap;
+	private HashMap<PersonAgeFine, Integer> ageFineMap;
 	private HashMap<PersonEthnicity, Integer> ethnicityMap;
 
 	PersonDatasetAnalytics(PersonDataset pd) {
-		set = pd;
+		set = new PersonDataset(pd);
 		genderMap = new HashMap<PersonGender, Integer>();
 		ageMap = new HashMap<PersonAge, Integer>();
+		ageFineMap = new HashMap<PersonAgeFine, Integer>();
 		ethnicityMap = new HashMap<PersonEthnicity, Integer>();
 		updateBiometricMaps();
 	}
 	
-	List<PersonDataset> getOptimizedDatasets(String name, int numberOfGuesses) {
+	List<PersonDataset> getOptimizedDatasets(String name, int numberOfGuesses, boolean useAgeFine) {
 		double bestFitness = 999;
 		List<List<Person>> bestLists = new ArrayList<List<Person>>();
 		
@@ -50,7 +52,7 @@ public class PersonDatasetAnalytics {
 			}
 			
 			// Calculate fitness current training and testing lists
-			double fitness = calculateFitness(newTrainingList, newTestingList);
+			double fitness = calculateFitness(newTrainingList, newTestingList, useAgeFine);
 			
 			// If fitness is lower than best fitness, set best lists to current lists
 			if(fitness < bestFitness) {
@@ -68,15 +70,16 @@ public class PersonDatasetAnalytics {
 		return Arrays.asList(trainingDataset, testingDataset);
 	}
 	
-	double calculateFitness(List<Person> trainingList, List<Person> testingList) {
+	double calculateFitness(List<Person> trainingList, List<Person> testingList, boolean useAgeFine) {
 		
 		// Get biometric reports for both training and testing lists
 		List<Double> trainingGenderReport = getBiometricReportForList(trainingList, Biometric.GENDER);
-		List<Double> trainingAgeReport = getBiometricReportForList(trainingList, Biometric.AGE);
+		List<Double> trainingAgeReport = useAgeFine ? trainingAgeReport = getBiometricReportForList(trainingList, Biometric.AGEFINE) :
+			getBiometricReportForList(trainingList, Biometric.AGE);
 		List<Double> trainingEthnicityReport = getBiometricReportForList(trainingList, Biometric.ETHNICITY);
 		
 		double idealGenderValue = (1d / (PersonGender.values().length - 1));
-		double idealAgeValue = (1d / (PersonAge.values().length - 1));
+		double idealAgeValue = useAgeFine ? (1d / (PersonAgeFine.values().length - 1)) : (1d / (PersonAge.values().length - 1));
 		double idealEthnicityValue = (1d / (PersonEthnicity.values().length - 1));
 		
 		double trainingGenderFitness = trainingGenderReport.stream().map(d -> abs(idealGenderValue - d)).reduce(0d, Double::sum);
@@ -103,6 +106,13 @@ public class PersonDatasetAnalytics {
 				ageMap.put(p.age, (ageMap.get(p.age) + 1));
 			} else {
 				ageMap.put(p.age, 1);
+			}
+			
+			// Add to ageFineMap
+			if (ageFineMap.containsKey(p.ageFine)) {
+				ageFineMap.put(p.ageFine, (ageFineMap.get(p.ageFine) + 1));
+			} else {
+				ageFineMap.put(p.ageFine, 1);
 			}
 
 			// Add to ethnicityMap
@@ -144,6 +154,21 @@ public class PersonDatasetAnalytics {
 				}
 				for(PersonAge pa : PersonAge.values()) {
 					double valToAdd = aMap.containsKey(pa) ? aMap.get(pa).doubleValue() : 0d;
+					biometricList.add(valToAdd);
+				}
+				break;
+			case AGEFINE:
+				HashMap<PersonAgeFine, Integer> afMap = new HashMap<PersonAgeFine, Integer>();
+				for (Person p : set.getPersonList()) {
+					// Add to afMap
+					if (afMap.containsKey(p.ageFine)) {
+						afMap.put(p.ageFine, (afMap.get(p.ageFine) + 1));
+					} else {
+						afMap.put(p.ageFine, 1);
+					}
+				}
+				for(PersonAgeFine pa : PersonAgeFine.values()) {
+					double valToAdd = afMap.containsKey(pa) ? afMap.get(pa).doubleValue() : 0d;
 					biometricList.add(valToAdd);
 				}
 				break;
@@ -193,6 +218,12 @@ public class PersonDatasetAnalytics {
 			case AGE:
 				for(PersonAge pa : PersonAge.values()) {
 					double valToAdd = ageMap.containsKey(pa) ? ageMap.get(pa).doubleValue() : 0d;
+					biometricList.add(valToAdd);
+				}
+				break;
+			case AGEFINE:
+				for(PersonAgeFine pa : PersonAgeFine.values()) {
+					double valToAdd = ageFineMap.containsKey(pa) ? ageFineMap.get(pa).doubleValue() : 0d;
 					biometricList.add(valToAdd);
 				}
 				break;
